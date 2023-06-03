@@ -1,18 +1,27 @@
-import { StyleSheet, View } from 'react-native';
-import Home from "./components/home"
-export default function App() {
-  return (
-    <View style={styles.container}>
-      <Home />
-    </View>
-  );
-}
+import * as React from 'react';
+import {NavigationContainer} from '@react-navigation/native';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import home from './components/home';
+import login from './components/login';
+import createjoin from './components/createjoin'
+import attendance from './components/attendence';
+const Stack = createNativeStackNavigator();
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+const MyStack = () => {
+  return (
+    
+    <NavigationContainer>
+      <Stack.Navigator>
+        <Stack.Screen
+          name="home"
+          component={home}
+          options={{title: ' '}}
+        />
+        <Stack.Screen name="login" component={login} options={{title:''}}/>
+        <Stack.Screen name="createjoin" component={createjoin} options={{title:''}}/>
+        <Stack.Screen name="attendance" component={attendance} options={{title:''}}/>
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+};
+export default MyStack

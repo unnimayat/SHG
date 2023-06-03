@@ -14,19 +14,20 @@ const CustomButton = ({ title, onPress, textColor }) => {
 const styles = StyleSheet.create({
   button: {
     backgroundColor: '#ffff',
-    borderRadius: 20,
-    paddingVertical: 10,
-    paddingHorizontal: 20,
+    borderRadius: 20, 
     alignItems: 'center',
     justifyContent: 'center',
+    height:50,
+    width:200
   },
-  buttonText: {
-    fontSize: 16,
+  buttonText: { 
     fontFamily: 'Inter',
-    fontStyle: 'italic',
-    fontSize: 28,
-    lineHeight: 20,
+    fontStyle: 'normal',
+    fontSize: 28, 
+    fontWeight:550
   },
 });
 
 export default CustomButton;
+  
+  

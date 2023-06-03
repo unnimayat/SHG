@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { StyleSheet, TextInput, View, TouchableOpacity, Text } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
 export default function Login() {
   const [name, setName] = useState('');
   const [id, setId] = useState('');
+  const navigation = useNavigation();
 
   const handleNameChange = (value) => {
     setName(value);
@@ -13,16 +15,14 @@ export default function Login() {
     setId(value);
   };
 
-  const handleButtonPress = () => {
-    // Handle button press action here
-    console.log('Button pressed');
+  const handleButtonPress = () => { 
+    navigation.navigate('createjoin');
   };
-
-  console.log(name + id);
-
+ 
   return (
     <View style={styles.container}>
       <View style={styles.label}>
+        <Text style={styles.loginText1}>LOGIN</Text>
         <TextInput
           style={styles.inputname}
           placeholder="Enter Name"
@@ -51,19 +51,19 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
-  },
+  }, 
   label: {
-    backgroundColor: '#8B1874',
+    border: '2px solid #8B1874', 
     width: 309,
     height: 607,
     borderRadius: 10,
     justifyContent: 'center',
-    alignItems: 'center',
+    alignItems: 'center'
   },
   inputname: {
+    border: '1px solid #433C41',
     width: 243,
-    height: 41,
-    backgroundColor: '#D9D9D9',
+    height: 41, 
     borderRadius: 20,
     alignSelf: 'center',
     justifyContent: 'center',
@@ -79,15 +79,21 @@ const styles = StyleSheet.create({
     width: 145,
     height: 44,
     borderRadius: 20,
-    backgroundColor: '#D9D9D9',
+    backgroundColor: '#8B1874',
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 20,
   },
   loginText: {
-    color: '#8B1874',
+    color: '#FFFFFF',
     fontSize: 20,
     fontWeight:'bold'  
   },
+  loginText1:{
+    top:-100,
+    color: '#8B1874',
+    fontSize: 24,
+    fontWeight:'bold' 
+  }
 }); 
-
+ 
