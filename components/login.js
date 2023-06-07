@@ -20,6 +20,8 @@ export default function Login() {
     axios.post('http://localhost:3005/login', { name, id })
     .then(response => {
       // Handle the response from the server
+      setName({name});
+      console.log(name);
       if (response.status) {
         // Login successful, navigate to the next screen
         navigation.navigate('createjoin');
