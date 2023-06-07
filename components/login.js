@@ -17,10 +17,10 @@ export default function Login() {
   };
 
   const handleButtonPress = () => { 
-    axios.post('http://your-backend-server/api/login', { name, id })
+    axios.post('http://localhost:3005/login', { name, id })
     .then(response => {
       // Handle the response from the server
-      if (response.data.success) {
+      if (response.status) {
         // Login successful, navigate to the next screen
         navigation.navigate('createjoin');
       } else {
