@@ -5,6 +5,7 @@ import home from './components/home';
 import login from './components/login';
 import createjoin from './components/createjoin'
 import attendance from './components/attendence';
+import unit from './components/unit';
 const Stack = createNativeStackNavigator();
 
 const MyStack = () => {
@@ -20,6 +21,7 @@ const MyStack = () => {
         <Stack.Screen name="login" component={login} options={{title:''}}/>
         <Stack.Screen name="createjoin" component={createjoin} options={{title:''}}/>
         <Stack.Screen name="attendance" component={attendance} options={{title:''}}/>
+        <Stack.Screen name='unit' component={unit} options={{title:''}}/>
       </Stack.Navigator>
     </NavigationContainer>
   );

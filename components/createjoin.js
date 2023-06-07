@@ -28,7 +28,7 @@ export default function Login() {
   };
 
   const handleButtonPress = () => {
-    navigation.navigate('attendance');
+    navigation.navigate('unit');
   };
 
   return (
@@ -142,7 +142,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   inputname: {
-    borderWidth: 1,
+    borderWidth: 0.5,
     borderColor: '#433C41',
     width: 243,
     height: 41,
@@ -192,5 +192,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: 60,
     height: 22,
+    top:10,
+    padding:0
   },
 });

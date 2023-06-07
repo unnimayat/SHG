@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { StyleSheet, TextInput, View, TouchableOpacity, Text } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import axios from 'axios'
 
 export default function Login() {
   const [name, setName] = useState('');
@@ -16,9 +17,23 @@ export default function Login() {
   };
 
   const handleButtonPress = () => { 
-    navigation.navigate('createjoin');
+    axios.post('http://your-backend-server/api/login', { name, id })
+    .then(response => {
+      // Handle the response from the server
+      if (response.data.success) {
+        // Login successful, navigate to the next screen
+        navigation.navigate('createjoin');
+      } else {
+        console.log('login unsuccessful');
+      }
+    })
+    .catch(error => { 
+      console.log('error');
+    });
+    
   };
  
+
   return (
     <View style={styles.container}>
       <View style={styles.label}>
@@ -52,16 +67,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   }, 
-  label: {
-    border: '2px solid #8B1874', 
+  label: {  
+    borderWidth: 2,
+    borderColor: '#8B1874',
     width: 309,
     height: 607,
     borderRadius: 10,
     justifyContent: 'center',
     alignItems: 'center'
   },
-  inputname: {
-    border: '1px solid #433C41',
+  inputname: { 
     width: 243,
     height: 41, 
     borderRadius: 20,
@@ -72,7 +87,8 @@ const styles = StyleSheet.create({
     color: '#8B1874',
     padding: 10,
     fontSize: 12,
-    borderWidth: 0,
+    borderWidth: 0.5, 
+    borderColor: '#433C41',
     marginTop: 10,
   },
   loginbtn: {

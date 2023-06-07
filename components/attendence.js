@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, Platform } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 const Attendance = () => {
   const navigation = useNavigation();
@@ -12,14 +13,40 @@ const Attendance = () => {
     // Add more students as needed
   ]);
 
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+
   const toggleAttendance = (index) => {
     const updatedStudents = [...students];
     updatedStudents[index].attendance = !updatedStudents[index].attendance;
     setStudents(updatedStudents);
   };
 
-  const handleButtonTodayPress = () => {};
-  const handleSaveButtonPress = () => {};
+  
+
+const handleButtonTodayPress = () => {
+  const currentDate = new Date();
+  setSelectedDate(currentDate);
+  setDatePickerVisibility(true); // Added code to show the date picker
+};
+
+// ...
+
+
+  const handleSaveButtonPress = () => {
+    console.log('Save button pressed');
+  };
+
+  const handleDateConfirm = (event, date) => {
+    if (date) {
+      setSelectedDate(date);
+    }
+    setDatePickerVisibility(false);
+  };
+
+  const handleDateCancel = () => {
+    setDatePickerVisibility(false);
+  };
 
   return (
     <ScrollView>
@@ -27,8 +54,11 @@ const Attendance = () => {
         <View style={styles.today}>
           <TouchableOpacity style={styles.todaybtn} onPress={handleButtonTodayPress}>
             <Text style={styles.todayText}>Today</Text>
-            <Icon name="calendar" size={20} color="#8B1874" />
+            <Icon name="calendar" size={16} color="#8B1874" />
           </TouchableOpacity>
+          {selectedDate !== '' && (
+            <Text style={styles.selectedDate}>{selectedDate.toLocaleDateString()}</Text>
+          )}
         </View>
         <View style={styles.tableContainer}>
           <View style={styles.headerRow}>
@@ -64,6 +94,15 @@ const Attendance = () => {
         <TouchableOpacity style={styles.savebtn} onPress={handleSaveButtonPress}>
           <Text style={styles.saveText}>SAVE</Text>
         </TouchableOpacity>
+        {isDatePickerVisible && (
+          <DateTimePicker
+            testID="dateTimePicker"
+            value={selectedDate}
+            mode="date"
+            display="default"
+            onChange={handleDateConfirm}
+          />
+        )}
       </View>
     </ScrollView>
   );
@@ -81,6 +120,8 @@ const styles = {
     height: 43,
     left: 32,
     top: 26,
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   todaybtn: {
     borderWidth: 1,
@@ -90,6 +131,7 @@ const styles = {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
+    marginRight: 10,
   },
   todayText: {
     fontFamily: 'Inter',
@@ -99,6 +141,14 @@ const styles = {
     lineHeight: 29,
     color: '#8B1874',
     marginRight: 5,
+  },
+  selectedDate: {
+    fontFamily: 'Inter',
+    fontStyle: 'normal',
+    fontWeight: '300',
+    fontSize: 16,
+    lineHeight: 29,
+    color: '#8B1874',
   },
   tableContainer: {
     top: 10,
@@ -113,7 +163,7 @@ const styles = {
   headerRow: {
     flexDirection: 'row',
     backgroundColor: '#eee',
-    padding: 10,
+    padding: 5,
   },
   headerCell: {
     flex: 1,
@@ -134,8 +184,8 @@ const styles = {
     alignItems: 'center',
   },
   radioBtn: {
-    width: 20,
-    height: 20,
+    width: 10,
+    height: 10,
     borderRadius: 10,
     borderWidth: 2,
     borderColor: '#8B1874',
@@ -147,8 +197,8 @@ const styles = {
     backgroundColor: '#8B1874',
   },
   radioBtnInner: {
-    width: 10,
-    height: 10,
+    width: 5,
+    height: 5,
     borderRadius: 5,
     backgroundColor: '#fff',
   },
