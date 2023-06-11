@@ -1,11 +1,64 @@
 import React, { useState } from 'react';
 import { StyleSheet, TextInput, View, TouchableOpacity, Text } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
- 
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import jwt_decode from "jwt-decode";
+
 export default function Login() {
   const [name, setName] = useState('');
   const [id, setId] = useState('');
   const navigation = useNavigation();
+
+  const storeToken = async (token) => {
+    try {
+      await AsyncStorage.setItem('token', token);
+      console.log('Token stored successfully');
+      console.log(token)
+
+      // Decode the token to get user details
+
+      const decodedToken = jwt_decode(token);
+      const { name, id } = decodedToken;
+
+      // Store user details in AsyncStorage
+      await AsyncStorage.setItem('userId', id);
+      await AsyncStorage.setItem('username', name);
+
+    } catch (error) {
+      console.error('Failed to store token', error);
+    }
+  };
+
+  const retrieveToken = async () => {
+    try {
+      const token = await AsyncStorage.getItem('token');
+      const userId = await AsyncStorage.getItem('userId');
+      const username = await AsyncStorage.getItem('username');
+      if (token) {
+        console.log('Token retrieved successfully');
+        console.log(userId)
+        console.log(username)
+        return token;
+      } else {
+        console.log('Token not found');
+        return null;
+      }
+    } catch (error) {
+      console.error('Failed to retrieve token', error);
+      return null;
+    }
+  };
+
+  const removeToken = async () => {
+    try {
+      await AsyncStorage.removeItem('token');
+      console.log('Token removed successfully');
+    } catch (error) {
+      console.error('Failed to remove token', error);
+    }
+  };
+
 
   const handleNameChange = (value) => {
     setName(value);
@@ -15,13 +68,30 @@ export default function Login() {
     setId(value);
   };
 
-  const handleButtonPress = () => { 
-     
-        navigation.navigate('createjoin');
-      
-    
+  const handleButtonPress = () => {
+    // axios.post('http://localhost:3005/login', { name, id })
+    //   .then(response => {
+    //     // Handle the response from the server
+    //     // setName({ name });
+    //     // console.log(name);
+    //     console.log(response)
+    //     if (response.data.status) {
+    //       // Login successful, navigate to the next screen
+    //       const token = response.data.token;
+    //       storeToken(token)
+
+          navigation.navigate('createjoin');
+    //     } else {
+    //       console.log('login unsuccessful');
+    //     }
+    //   })
+    //   .catch(error => {
+    //     console.log('error');
+    //   });
+
   };
-  
+
+
   return (
     <View style={styles.container}>
       <View style={styles.label}>
@@ -54,8 +124,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
-  }, 
-  label: {  
+  },
+  label: {
     borderWidth: 2,
     borderColor: '#8B1874',
     width: 309,
@@ -64,18 +134,18 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center'
   },
-  inputname: { 
+  inputname: {
     width: 243,
-    height: 41, 
+    height: 41,
     borderRadius: 20,
     alignSelf: 'center',
     justifyContent: 'center',
-    marginBottom: 20, 
+    marginBottom: 20,
     lineHeight: 18,
     color: '#8B1874',
     padding: 10,
     fontSize: 12,
-    borderWidth: 0.5, 
+    borderWidth: 0.5,
     borderColor: '#433C41',
     marginTop: 10,
   },  
@@ -101,5 +171,4 @@ const styles = StyleSheet.create({
     fontWeight: 'bold', 
     color:'#8B1874'
   }
-}); 
- 
+});
