@@ -1,8 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Dimensions, TextInput } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import Popover from 'react-native-popover-view';
 import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import jwt_decode from "jwt-decode";
+import axios from 'axios';
 
 const { width } = Dimensions.get('window');
 
@@ -11,7 +14,47 @@ const MyScreen = () => {
   const [menuVisible, setMenuVisible] = useState(false);
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
+  const [uid, setUId] = useState('')
+  const [isadmin, setIsadmin] = useState(false);
 
+
+  const retrieveToken = async () => {
+    try {
+      const token = await AsyncStorage.getItem('token');
+
+      if (token) {
+        console.log('Token retrieved successfully');
+        const decodedToken = jwt_decode(token);
+        const { name, id } = decodedToken;
+        console.log(name)
+        console.log(id)
+        return { name, id };
+      } else {
+        console.log('Token not found');
+        return null;
+      }
+    } catch (error) {
+      console.error('Failed to retrieve token', error);
+      return null;
+    }
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const { name, id } = await retrieveToken();
+      console.log(id);
+      setUId(id);
+    };
+    fetchData();
+  }, [])
+  useEffect(() => {
+    if (uid !== '') {
+      axios.get(`http://localhost:3005/users/${uid}/hasadminAccess`).then(response => {
+        setIsadmin(response.data.hasAdminAccess)
+        console.log(isadmin)
+      })
+    }
+  }, [uid])
   const handleMenuPress = () => {
     setMenuVisible(true);
   };
@@ -42,14 +85,14 @@ const MyScreen = () => {
     updatedMessages[index].agreed = !updatedMessages[index].agreed;
     setMessages(updatedMessages);
   };
-  
+
   const handleDisagree = (index) => {
     const updatedMessages = [...messages];
     updatedMessages[index].agreed = false;
     setMessages(updatedMessages);
   };
-  
-  
+
+
 
   return (
     <View style={styles.container}>
@@ -80,26 +123,26 @@ const MyScreen = () => {
         </TouchableOpacity>
       </Popover>
       <View style={styles.messageBox}>
-  {messages.map((message, index) => (
-    <View key={index} style={[styles.messageItem, styles.messageContainer]}>
-      <Text style={styles.messageContent}>{message.content}</Text>
-      <View style={styles.iconsContainer}>
-        <TouchableOpacity
-          style={[styles.iconContainer, message.agreed && styles.agreedIcon]}
-          onPress={() => handleAgree(index)}
-        >
-          <MaterialIcons name="thumb-up" size={18} color="white" />
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.iconContainer, !message.agreed && styles.disagreedIcon]}
-          onPress={() => handleDisagree(index)}
-        >
-          <MaterialIcons name="thumb-down" size={18} color="white" />
-        </TouchableOpacity>
+        {messages.map((message, index) => (
+          <View key={index} style={[styles.messageItem, styles.messageContainer]}>
+            <Text style={styles.messageContent}>{message.content}</Text>
+            <View style={styles.iconsContainer}>
+              <TouchableOpacity
+                style={[styles.iconContainer, message.agreed && styles.agreedIcon]}
+                onPress={() => handleAgree(index)}
+              >
+                <MaterialIcons name="thumb-up" size={18} color="white" />
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.iconContainer, !message.agreed && styles.disagreedIcon]}
+                onPress={() => handleDisagree(index)}
+              >
+                <MaterialIcons name="thumb-down" size={18} color="white" />
+              </TouchableOpacity>
+            </View>
+          </View>
+        ))}
       </View>
-    </View>
-  ))}
-</View>
 
       <View style={styles.inputContainer}>
         <TextInput
@@ -170,7 +213,7 @@ const styles = StyleSheet.create({
     top: 58,
     borderRadius: 8,
     padding: 10,
-   backgroundColor:'white'
+    backgroundColor: 'white'
   },
   messageItem: {
     flexDirection: 'row',
@@ -193,7 +236,7 @@ const styles = StyleSheet.create({
   messageContent: {
     color: 'black',
     marginRight: 10,
- 
+
   },
   messageContainer: {
     backgroundColor: '#F5F5F5',
@@ -207,7 +250,7 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
   },
-  
+
   iconsContainer: {
     flexDirection: 'row',
   },
@@ -220,7 +263,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#8B1874',
     marginLeft: 8, // Adjust the value as needed
   },
- 
+
 
   inputContainer: {
     position: 'absolute',

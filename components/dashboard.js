@@ -1,9 +1,45 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, TouchableOpacity,Text } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import jwt_decode from "jwt-decode";
+import axios from 'axios';
+
+const retrieveToken = async () => {
+  try {
+    const token = await AsyncStorage.getItem('token');
+    
+    if (token) {
+      console.log('Token retrieved successfully');
+      const decodedToken = jwt_decode(token);
+      const { name, id } = decodedToken;
+      console.log(name)
+      console.log(id)
+      return {name,id};
+    } else {
+      console.log('Token not found');
+      return null;
+    }
+  } catch (error) {
+    console.error('Failed to retrieve token', error);
+    return null;
+  }
+};
 
 export default function Dashboard() {
+
+  const [uname, setUname] = useState('')
+
+  useEffect(()=>{
+    const fetchData = async () => {
+      const { name,id } = await retrieveToken();
+      console.log(name);
+      setUname(name);
+    };
+
+    fetchData();
+  },[])
   const navigation = useNavigation();
 
   const handleHomePress = () => {
@@ -35,7 +71,7 @@ export default function Dashboard() {
 
       {/* Lower div */}
       <View style={styles.lowerDiv} />
-        <Text style={styles.heading}>Name User</Text>
+        <Text style={styles.heading}>{uname}</Text>
         <View style={styles.contents}>
             <Text style={styles.content}>lddhddhdh</Text>
             <Text style={styles.content}>lddhddhdh</Text>

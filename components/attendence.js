@@ -4,19 +4,40 @@ import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import jwt_decode from "jwt-decode";
+import axios from 'axios';
 
 const Attendance = () => {
   const navigation = useNavigation();
-  const [students, setStudents] = useState([
-    { id: 1, name: 'John Doe', attendance: false },
-    { id: 2, name: 'Jane Smith', attendance: false },
-    { id: 3, name: 'Alex Johnson', attendance: false },
-    // Add more students as needed
-  ]);
-
+  const [students, setStudents] = useState([]);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [show, setShow] = useState(false);
   const [text, setText] = useState('Today');
+
+  useEffect(() => {
+    // Fetch attendance data from the endpoint
+    axios.get(`/attendance?date=${selectedDate}`)
+      .then(response => {
+        console.log(selectedDate);
+        const attendanceData = response.data;
+
+        // Map the attendance data to update the attendance status of students
+        const updatedStudents = students.map(student => {
+          // Check if the student's ID exists in the attendance data
+          const attendance = attendanceData.users.includes(student.id);
+
+          // Update the attendance status of the student
+          return { ...student, attendance: attendance };
+        });
+
+        // Update the state with the updated attendance status of students
+        setStudents(updatedStudents);
+      })
+      .catch(error => {
+        console.error(error);
+      });
+  }, [selectedDate]);
 
   const toggleAttendance = (index) => {
     const updatedStudents = [...students];
@@ -56,47 +77,47 @@ const Attendance = () => {
               style={styles.datepicker}
             />
           )}
-        </View> 
-        {!show &&<View style={styles.center}>
-        <View style={styles.tableContainer}>
-          <View style={styles.headerRow}>
-            <Text style={styles.headerCell}>ID</Text>
-            <Text style={styles.headerCell}>Name</Text>
-            <Text style={styles.headerCell}>Attendance</Text>
-          </View>
-          {students.map((student, index) => (
-            <TouchableOpacity
-              key={student.id}
-              style={styles.row}
-              onPress={() => toggleAttendance(index)}
-            >
-              <Text style={styles.cell}>{student.id}</Text>
-              <Text style={styles.cell}>{student.name}</Text>
-              <View style={styles.attendanceCell}>
-                <TouchableOpacity
-                  style={[
-                    styles.radioBtn,
-                    student.attendance && styles.radioBtnSelected,
-                  ]}
-                  onPress={() => toggleAttendance(index)}
-                >
-                  {student.attendance && <View style={styles.radioBtnInner} />}
-                </TouchableOpacity>
-                <Text style={styles.attendanceText}>
-                  {student.attendance ? 'Present' : 'Absent'}
-                </Text>
-              </View>
-            </TouchableOpacity>
-          ))}
         </View>
-        <TouchableOpacity style={styles.savebtn} onPress={handleSaveButtonPress}>
-          <Text style={styles.saveText}>SAVE</Text>
-        </TouchableOpacity>
+        {!show && <View style={styles.center}>
+          <View style={styles.tableContainer}>
+            <View style={styles.headerRow}>
+              <Text style={styles.headerCell}>ID</Text>
+              <Text style={styles.headerCell}>Name</Text>
+              <Text style={styles.headerCell}>Attendance</Text>
+            </View>
+            {students.map((student, index) => (
+              <TouchableOpacity
+                key={student.id}
+                style={styles.row}
+                onPress={() => toggleAttendance(index)}
+              >
+                <Text style={styles.cell}>{student.id}</Text>
+                <Text style={styles.cell}>{student.name}</Text>
+                <View style={styles.attendanceCell}>
+                  <TouchableOpacity
+                    style={[
+                      styles.radioBtn,
+                      student.attendance && styles.radioBtnSelected,
+                    ]}
+                    onPress={() => toggleAttendance(index)}
+                  >
+                    {student.attendance && <View style={styles.radioBtnInner} />}
+                  </TouchableOpacity>
+                  <Text style={styles.attendanceText}>
+                    {student.attendance ? 'Present' : 'Absent'}
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            ))}
+          </View>
+          <TouchableOpacity style={styles.savebtn} onPress={handleSaveButtonPress}>
+            <Text style={styles.saveText}>SAVE</Text>
+          </TouchableOpacity>
         </View>}
-        
+
       </View>
     </ScrollView>
-       
+
   );
 };
 
@@ -107,10 +128,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  center:{
-    alignContent:'center',
-    justifyContent:'center',
-    alignItems:'center'
+  center: {
+    alignContent: 'center',
+    justifyContent: 'center',
+    alignItems: 'center'
   },
   today: {
     width: 200,
@@ -129,7 +150,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 10,
-    padding:5,
+    padding: 5,
   },
   todayText: {
     fontFamily: 'Inter',
@@ -149,7 +170,7 @@ const styles = StyleSheet.create({
     color: '#8B1874',
   },
   tableContainer: {
-    top: 10, 
+    top: 10,
     borderRadius: 10,
     margin: 20,
     width: 329,
@@ -203,24 +224,24 @@ const styles = StyleSheet.create({
   },
   savebtn: {
     backgroundColor: '#A06D95',
-    borderRadius: 10, 
-    padding:5,
-    width:100,   
+    borderRadius: 10,
+    padding: 5,
+    width: 100,
     justifyContent: 'center',
     alignItems: 'center',
-    bottom:10,
-    position:'absolute'
+    bottom: 10,
+    position: 'absolute'
   },
   saveText: {
     color: '#FFFFFF',
     fontSize: 18,
     fontWeight: 'bold',
-    justifyContent:'center',
-    alignItems:'center',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  datepicker:{
-    color:'#A06D95',
-    backgroundColor:'#A06D95'
+  datepicker: {
+    color: '#A06D95',
+    backgroundColor: '#A06D95'
   }
 });
 
