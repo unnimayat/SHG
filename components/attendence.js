@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, Platform } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import DateTimePicker from '@react-native-community/datetimepicker';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 
 const Attendance = () => {
   const navigation = useNavigation();
@@ -14,7 +15,8 @@ const Attendance = () => {
   ]);
 
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+  const [show, setShow] = useState(false);
+  const [text, setText] = useState('Today');
 
   const toggleAttendance = (index) => {
     const updatedStudents = [...students];
@@ -22,30 +24,20 @@ const Attendance = () => {
     setStudents(updatedStudents);
   };
 
-  
+  const handleButtonTodayPress = () => {
+    setShow(!show);
+  };
 
-const handleButtonTodayPress = () => {
-  const currentDate = new Date();
-  setSelectedDate(currentDate);
-  setDatePickerVisibility(true); // Added code to show the date picker
-};
-
-// ...
-
+  const handleDateChange = (date) => {
+    setSelectedDate(date);
+    setShow(false);
+    const formattedDate =
+      date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear();
+    setText(formattedDate);
+  };
 
   const handleSaveButtonPress = () => {
-    console.log('Save button pressed');
-  };
-
-  const handleDateConfirm = (event, date) => {
-    if (date) {
-      setSelectedDate(date);
-    }
-    setDatePickerVisibility(false);
-  };
-
-  const handleDateCancel = () => {
-    setDatePickerVisibility(false);
+    navigation.navigate('unit');
   };
 
   return (
@@ -53,13 +45,19 @@ const handleButtonTodayPress = () => {
       <View style={styles.container}>
         <View style={styles.today}>
           <TouchableOpacity style={styles.todaybtn} onPress={handleButtonTodayPress}>
-            <Text style={styles.todayText}>Today</Text>
+            <Text style={styles.todayText}>{text}</Text>
             <Icon name="calendar" size={16} color="#8B1874" />
           </TouchableOpacity>
-          {selectedDate !== '' && (
-            <Text style={styles.selectedDate}>{selectedDate.toLocaleDateString()}</Text>
+          {show && (
+            <DatePicker
+              selected={selectedDate}
+              onChange={handleDateChange}
+              dateFormat="dd/MM/yyyy"
+              style={styles.datepicker}
+            />
           )}
-        </View>
+        </View> 
+        {!show &&<View style={styles.center}>
         <View style={styles.tableContainer}>
           <View style={styles.headerRow}>
             <Text style={styles.headerCell}>ID</Text>
@@ -94,30 +92,29 @@ const handleButtonTodayPress = () => {
         <TouchableOpacity style={styles.savebtn} onPress={handleSaveButtonPress}>
           <Text style={styles.saveText}>SAVE</Text>
         </TouchableOpacity>
-        {isDatePickerVisible && (
-          <DateTimePicker
-            testID="dateTimePicker"
-            value={selectedDate}
-            mode="date"
-            display="default"
-            onChange={handleDateConfirm}
-          />
-        )}
+        </View>}
+        
       </View>
     </ScrollView>
+       
   );
 };
 
-const styles = {
+const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
   },
+  center:{
+    alignContent:'center',
+    justifyContent:'center',
+    alignItems:'center'
+  },
   today: {
-    width: 150,
-    height: 43,
+    width: 200,
+    height: 50,
     left: 32,
     top: 26,
     flexDirection: 'row',
@@ -132,6 +129,7 @@ const styles = {
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 10,
+    padding:5,
   },
   todayText: {
     fontFamily: 'Inter',
@@ -151,10 +149,7 @@ const styles = {
     color: '#8B1874',
   },
   tableContainer: {
-    top: 10,
-    borderWidth: 1,
-    borderColor: '#8B1874',
-    backgroundColor: '#FADFF0',
+    top: 10, 
     borderRadius: 10,
     margin: 20,
     width: 329,
@@ -188,13 +183,13 @@ const styles = {
     height: 10,
     borderRadius: 10,
     borderWidth: 2,
-    borderColor: '#8B1874',
+    borderColor: '#A06D95',
     marginRight: 5,
     alignItems: 'center',
     justifyContent: 'center',
   },
   radioBtnSelected: {
-    backgroundColor: '#8B1874',
+    backgroundColor: '#A06D95',
   },
   radioBtnInner: {
     width: 5,
@@ -203,23 +198,30 @@ const styles = {
     backgroundColor: '#fff',
   },
   attendanceText: {
-    fontWeight: 'bold',
-    color: '#8B1874',
+    fontWeight: '400',
+    color: '#A06D95',
   },
   savebtn: {
-    width: 145,
-    height: 44,
-    borderRadius: 20,
-    backgroundColor: '#8B1874',
+    backgroundColor: '#A06D95',
+    borderRadius: 10, 
+    padding:5,
+    width:100,   
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 20,
+    bottom:10,
+    position:'absolute'
   },
   saveText: {
-    color: '#ffff',
-    fontSize: 20,
+    color: '#FFFFFF',
+    fontSize: 18,
     fontWeight: 'bold',
+    justifyContent:'center',
+    alignItems:'center',
   },
-};
+  datepicker:{
+    color:'#A06D95',
+    backgroundColor:'#A06D95'
+  }
+});
 
 export default Attendance;

@@ -21,9 +21,9 @@ const MyScreen = () => {
     if (item === 'Attendance') {
       navigation.navigate('attendance');
     } else if (item === 'Home') {
-      navigation.navigate('home');
-    } else if (item === 'Login') {
       navigation.navigate('login');
+    } else if (item === 'Members') {
+      navigation.navigate('members');
     }
 
     // Close the menu
@@ -72,8 +72,11 @@ const MyScreen = () => {
         <TouchableOpacity style={styles.menuItem} onPress={() => handleMenuItemPress('Home')}>
           <Text>Home</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.menuItem} onPress={() => handleMenuItemPress('Login')}>
-          <Text>Login</Text>
+        <TouchableOpacity style={styles.menuItem} onPress={() => handleMenuItemPress('Members')}>
+          <Text>Members</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.menuItem} onPress={() => handleMenuItemPress('Home')}>
+          <Text>Log out</Text>
         </TouchableOpacity>
       </Popover>
       <View style={styles.messageBox}>

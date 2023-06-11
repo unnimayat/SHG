@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { StyleSheet, TextInput, View, TouchableOpacity, Text } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 export default function Login() {
   const [unit_name, setName] = useState('');
@@ -29,6 +30,16 @@ export default function Login() {
 
   const handleButtonPress = () => {
     navigation.navigate('unit');
+  };
+
+  const handleHomePress = () => {
+    navigation.navigate('login');  
+  };
+  const handleProfilePress = () => {
+    navigation.navigate('dashboard');  
+  };
+  const handleCreatePress = () => {
+    navigation.navigate('createjoin');  
   };
 
   return (
@@ -79,19 +90,21 @@ export default function Login() {
 
       {/* navbar */}
       <View style={styles.navbar}>
-        <TouchableOpacity style={styles.navbarButton}>
-          <Text style={styles.buttonText}>Feed</Text>
+        <TouchableOpacity style={styles.navbarButton} onPress={handleHomePress}>
+          <Ionicons name="home-outline" size={24} color="#FFFFFF" />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.navbarButton}>
-          <Text style={styles.buttonText}>Create / Join</Text>
+        <TouchableOpacity style={styles.navbarButton} onPress={handleCreatePress}>
+          <Ionicons name="create-outline" size={24} color="#FFFFFF" />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.navbarButton}>
-          <Text style={styles.buttonText}></Text>
+        <TouchableOpacity style={styles.navbarButton} onPress={handleProfilePress}>
+          <Ionicons name="person-outline" size={24} color="#FFFFFF" />
         </TouchableOpacity>
       </View>
     </View>
   );
 }
+ 
+
 
 const styles = StyleSheet.create({
   container: {
@@ -136,10 +149,26 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: '#8B1874',
     width: 329,
-    height: 520,
+    height: 580,
     borderRadius: 10,
     justifyContent: 'center',
     alignItems: 'center',
+  }, 
+  loginbtn: {
+    backgroundColor: '#A06D95',
+    borderRadius: 10, 
+    padding:5,
+    width:100,   
+    justifyContent: 'center',
+    alignItems: 'center',
+    top:40,
+  },
+  loginText: {
+    color: '#FFFFFF',
+    fontSize: 18,
+    fontWeight: 'bold',
+    justifyContent:'center',
+    alignItems:'center',
   },
   inputname: {
     borderWidth: 0.5,
@@ -156,24 +185,11 @@ const styles = StyleSheet.create({
     fontSize: 12,
     marginTop: 10,
   },
-  loginbtn: {
-    width: 145,
-    height: 44,
-    borderRadius: 20,
-    backgroundColor: '#8B1874',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 20,
-  },
-  loginText: {
-    color: '#ffff',
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
+   
   loginText1: {
-    color: '#8B1874',
-    fontSize: 24,
-    fontWeight: 'bold',
+    fontSize: 20,
+    fontWeight: 'bold', 
+    color:'#8B1874',
     bottom: 50,
   },
   navbar: {
@@ -182,7 +198,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#A06D95',
     width: 329,
     height: 42,
-    top: 10,
+    position: 'absolute',
+    bottom: 10,
     borderTopLeftRadius: 15,
     borderTopRightRadius: 15,
     overflow: 'hidden',
@@ -190,9 +207,10 @@ const styles = StyleSheet.create({
   navbarButton: {
     flex: 1,
     alignItems: 'center',
+    justifyContent: 'center',
     width: 60,
     height: 22,
     top:10,
-    padding:0
+    padding: 10,
   },
 });
