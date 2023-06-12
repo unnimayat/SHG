@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -10,34 +10,72 @@ import axios from 'axios';
 
 const Attendance = () => {
   const navigation = useNavigation();
+  const currentDate = new Date();
   const [students, setStudents] = useState([]);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [show, setShow] = useState(false);
-  const [text, setText] = useState('Today');
+  const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
+  const [text, setText] = useState('');
+  const [uid, setUId] = useState('')
+
+  const retrieveToken = async () => {
+    try {
+      const token = await AsyncStorage.getItem('token');
+
+      if (token) {
+        console.log('Token retrieved successfully');
+        const decodedToken = jwt_decode(token);
+        const { name, id } = decodedToken;
+        console.log(name)
+        console.log(id)
+        return { name, id };
+      } else {
+        console.log('Token not found');
+        return null;
+      }
+    } catch (error) {
+      console.error('Failed to retrieve token', error);
+      return null;
+    }
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const { name, id } = await retrieveToken();
+      console.log(id);
+      setUId(id);
+    };
+    fetchData();
+    handleDateChange(currentDate)
+  }, [])
 
   useEffect(() => {
     // Fetch attendance data from the endpoint
-    axios.get(`/attendance?date=${selectedDate}`)
-      .then(response => {
-        console.log(selectedDate);
-        const attendanceData = response.data;
+    if (uid != '') {
+      axios.get(`http://localhost:3005/attendance/${uid}/${text}`)
+        .then(response => {
+          console.log(text);
+          const attendanceData = response.data;
 
-        // Map the attendance data to update the attendance status of students
-        const updatedStudents = students.map(student => {
-          // Check if the student's ID exists in the attendance data
-          const attendance = attendanceData.users.includes(student.id);
+          console.log(response.data.presentUsers)
 
-          // Update the attendance status of the student
-          return { ...student, attendance: attendance };
+          // Map the attendance data to update the attendance status of students
+          const updatedStudents = students.map(student => {
+            // Check if the student's ID exists in the attendance data
+            const attendance = attendanceData.users.includes(student.id);
+
+            // Update the attendance status of the student
+            return { ...student, attendance: attendance };
+          });
+
+          // Update the state with the updated attendance status of students
+          setStudents(updatedStudents);
+        })
+        .catch(error => {
+          console.error(error);
         });
-
-        // Update the state with the updated attendance status of students
-        setStudents(updatedStudents);
-      })
-      .catch(error => {
-        console.error(error);
-      });
-  }, [selectedDate]);
+    }
+  }, [text, uid]);
 
   const toggleAttendance = (index) => {
     const updatedStudents = [...students];
@@ -52,8 +90,10 @@ const Attendance = () => {
   const handleDateChange = (date) => {
     setSelectedDate(date);
     setShow(false);
-    const formattedDate =
-      date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear();
+    const day = ("0" + date.getDate()).slice(-2);
+    const month = ("0" + (date.getMonth() + 1)).slice(-2);
+    const year = date.getFullYear();
+    const formattedDate = `${year}-${month}-${day}`;
     setText(formattedDate);
   };
 
@@ -78,46 +118,46 @@ const Attendance = () => {
             />
           )}
         </View>
-        {!show && <View style={styles.center}>
-          <View style={styles.tableContainer}>
-            <View style={styles.headerRow}>
-              <Text style={styles.headerCell}>ID</Text>
-              <Text style={styles.headerCell}>Name</Text>
-              <Text style={styles.headerCell}>Attendance</Text>
+        {!show && (
+          <View style={styles.center}>
+            <View style={styles.tableContainer}>
+              <View style={styles.headerRow}>
+                <Text style={styles.headerCell}>ID</Text>
+                <Text style={styles.headerCell}>Name</Text>
+                <Text style={styles.headerCell}>Attendance</Text>
+              </View>
+              {students.map((student, index) => (
+                <TouchableOpacity
+                  key={student.id}
+                  style={styles.row}
+                  onPress={() => toggleAttendance(index)}
+                >
+                  <Text style={styles.cell}>{student.id}</Text>
+                  <Text style={styles.cell}>{student.name}</Text>
+                  <View style={styles.attendanceCell}>
+                    <TouchableOpacity
+                      style={[
+                        styles.radioBtn,
+                        student.attendance && styles.radioBtnSelected,
+                      ]}
+                      onPress={() => toggleAttendance(index)}
+                    >
+                      {student.attendance && <View style={styles.radioBtnInner} />}
+                    </TouchableOpacity>
+                    <Text style={styles.attendanceText}>
+                      {student.attendance ? 'Present' : 'Absent'}
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+              ))}
             </View>
-            {students.map((student, index) => (
-              <TouchableOpacity
-                key={student.id}
-                style={styles.row}
-                onPress={() => toggleAttendance(index)}
-              >
-                <Text style={styles.cell}>{student.id}</Text>
-                <Text style={styles.cell}>{student.name}</Text>
-                <View style={styles.attendanceCell}>
-                  <TouchableOpacity
-                    style={[
-                      styles.radioBtn,
-                      student.attendance && styles.radioBtnSelected,
-                    ]}
-                    onPress={() => toggleAttendance(index)}
-                  >
-                    {student.attendance && <View style={styles.radioBtnInner} />}
-                  </TouchableOpacity>
-                  <Text style={styles.attendanceText}>
-                    {student.attendance ? 'Present' : 'Absent'}
-                  </Text>
-                </View>
-              </TouchableOpacity>
-            ))}
+            <TouchableOpacity style={styles.savebtn} onPress={handleSaveButtonPress}>
+              <Text style={styles.saveText}>SAVE</Text>
+            </TouchableOpacity>
           </View>
-          <TouchableOpacity style={styles.savebtn} onPress={handleSaveButtonPress}>
-            <Text style={styles.saveText}>SAVE</Text>
-          </TouchableOpacity>
-        </View>}
-
+        )}
       </View>
     </ScrollView>
-
   );
 };
 
@@ -131,7 +171,7 @@ const styles = StyleSheet.create({
   center: {
     alignContent: 'center',
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   today: {
     width: 200,
@@ -230,7 +270,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     bottom: 10,
-    position: 'absolute'
+    position: 'absolute',
   },
   saveText: {
     color: '#FFFFFF',
@@ -241,8 +281,8 @@ const styles = StyleSheet.create({
   },
   datepicker: {
     color: '#A06D95',
-    backgroundColor: '#A06D95'
-  }
+    backgroundColor: '#A06D95',
+  },
 });
 
 export default Attendance;
