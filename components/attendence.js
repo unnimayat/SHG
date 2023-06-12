@@ -48,6 +48,35 @@ const Attendance = () => {
     fetchData();
     handleDateChange(currentDate)
   }, [])
+ 
+  useEffect(() => {
+    // Fetch attendance data from the endpoint
+    axios.get(`http://localhost:3005/attendance/${uid}/${text}`)
+      .then(response => {
+        console.log(text);
+        const attendanceData = response.data.presentUsers;
+  
+        // Map the attendance data to update the attendance status of students
+        const updatedStudents = students.map(student => {
+          // Find the corresponding attendance record for the student
+          const attendanceRecord = attendanceData.find(record => record.id === student.id);
+  
+          if (attendanceRecord) {
+            // Update the attendance status of the student based on the "isPresent" value
+            student.attendance = attendanceRecord.present;
+          }
+  
+          return student;
+        });
+  
+        // Update the state with the updated attendance status of students
+        setStudents(updatedStudents);
+      })
+      .catch(error => {
+        console.error(error);
+      });
+  }, [text, uid]);
+  
 
   useEffect(() => {
     // Fetch attendance data from the endpoint
@@ -127,29 +156,30 @@ const Attendance = () => {
                 <Text style={styles.headerCell}>Attendance</Text>
               </View>
               {students.map((student, index) => (
-                <TouchableOpacity
-                  key={student.id}
-                  style={styles.row}
-                  onPress={() => toggleAttendance(index)}
-                >
-                  <Text style={styles.cell}>{student.id}</Text>
-                  <Text style={styles.cell}>{student.name}</Text>
-                  <View style={styles.attendanceCell}>
-                    <TouchableOpacity
-                      style={[
-                        styles.radioBtn,
-                        student.attendance && styles.radioBtnSelected,
-                      ]}
-                      onPress={() => toggleAttendance(index)}
-                    >
-                      {student.attendance && <View style={styles.radioBtnInner} />}
-                    </TouchableOpacity>
-                    <Text style={styles.attendanceText}>
-                      {student.attendance ? 'Present' : 'Absent'}
-                    </Text>
-                  </View>
-                </TouchableOpacity>
-              ))}
+  <TouchableOpacity
+    key={student.id}
+    style={styles.row}
+    onPress={() => toggleAttendance(index)}
+  >
+    <Text style={styles.cell}>{student.id}</Text>
+    <Text style={styles.cell}>{student.name}</Text>
+    <View style={styles.attendanceCell}>
+      <TouchableOpacity
+        style={[
+          styles.radioBtn,
+          student.attendance && styles.radioBtnSelected,
+        ]}
+        onPress={() => toggleAttendance(index)}
+      >
+        {student.attendance && <View style={styles.radioBtnInner} />}
+      </TouchableOpacity>
+      <Text style={styles.attendanceText}>
+        {student.attendance ? 'Present' : 'Absent'}
+      </Text>
+    </View>
+  </TouchableOpacity>
+))}
+
             </View>
             <TouchableOpacity style={styles.savebtn} onPress={handleSaveButtonPress}>
               <Text style={styles.saveText}>SAVE</Text>
