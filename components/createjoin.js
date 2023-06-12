@@ -1,14 +1,63 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, TextInput, View, TouchableOpacity, Text } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import jwt_decode from "jwt-decode";
+import axios from 'axios';
 
-export default function Login() {
+export default function CreateJoin() {
   const [unit_name, setName] = useState('');
   const [unit_id, setId] = useState('');
   const [createLabel, setCreateLabel] = useState(true);
   const [joinLabel, setJoinLabel] = useState(false);
   const navigation = useNavigation();
+  const [uid, setUId] = useState('')
+  const [invitestatus, setInvitestatus] = useState(null)
+
+  const retrieveToken = async () => {
+    try {
+      const token = await AsyncStorage.getItem('token');
+
+      if (token) {
+        console.log('Token retrieved successfully');
+        const decodedToken = jwt_decode(token);
+        const { name, id } = decodedToken;
+        console.log(name)
+        console.log(id)
+        return { name, id };
+      } else {
+        console.log('Token not found');
+        return null;
+      }
+    } catch (error) {
+      console.error('Failed to retrieve token', error);
+      return null;
+    }
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const { name, id } = await retrieveToken();
+      console.log(id);
+      setUId(id);
+    };
+    fetchData();
+  }, [])
+
+  useEffect(() => {
+    if (uid != '') {
+      axios.get(`http://localhost:3005/users/${uid}/invited`)
+        .then(response => {
+          const { is_invited } = response.data;
+          console.log(is_invited)
+          setInvitestatus(is_invited)
+        })
+        .catch(error => {
+          console.error(error);
+        });
+    }
+  }, [uid]);
 
   const handleNameChange = (value) => {
     setName(value);
@@ -29,17 +78,36 @@ export default function Login() {
   };
 
   const handleButtonPress = () => {
+    axios.post('http://localhost:3005/createunit', { unit_name, unit_id, uid })
+      .then(response => {
+        console.log(response)
+        if (response.data.status) {
+          // Login successful, navigate to the next screen
+          console.log(response.data.status)
+          navigation.navigate('createjoin');
+        } else {
+          console.log('Creation unsuccessful');
+        }
+      })
+      .catch(error => {
+        console.log('error');
+      });
     navigation.navigate('unit');
   };
 
   const handleHomePress = () => {
-    navigation.navigate('login');  
+    navigation.navigate('login');
   };
   const handleProfilePress = () => {
-    navigation.navigate('dashboard');  
+    navigation.navigate('dashboard');
   };
   const handleCreatePress = () => {
-    navigation.navigate('createjoin');  
+    console.log("Pressed join channel")
+    console.log(invitestatus)
+    if (invitestatus === 2) {
+      navigation.navigate('unit');
+    }
+    else { navigation.navigate('createjoin'); }
   };
 
   return (
@@ -103,7 +171,7 @@ export default function Login() {
     </View>
   );
 }
- 
+
 
 
 const styles = StyleSheet.create({
@@ -153,22 +221,22 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     justifyContent: 'center',
     alignItems: 'center',
-  }, 
+  },
   loginbtn: {
     backgroundColor: '#A06D95',
-    borderRadius: 10, 
-    padding:5,
-    width:100,   
+    borderRadius: 10,
+    padding: 5,
+    width: 100,
     justifyContent: 'center',
     alignItems: 'center',
-    top:40,
+    top: 40,
   },
   loginText: {
     color: '#FFFFFF',
     fontSize: 18,
     fontWeight: 'bold',
-    justifyContent:'center',
-    alignItems:'center',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   inputname: {
     borderWidth: 0.5,
@@ -185,11 +253,11 @@ const styles = StyleSheet.create({
     fontSize: 12,
     marginTop: 10,
   },
-   
+
   loginText1: {
     fontSize: 20,
-    fontWeight: 'bold', 
-    color:'#8B1874',
+    fontWeight: 'bold',
+    color: '#8B1874',
     bottom: 50,
   },
   navbar: {
@@ -210,7 +278,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     width: 60,
     height: 22,
-    top:10,
+    top: 10,
     padding: 10,
   },
 });

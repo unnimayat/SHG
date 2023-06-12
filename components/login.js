@@ -18,12 +18,12 @@ export default function Login() {
 
       // Decode the token to get user details
 
-      const decodedToken = jwt_decode(token);
-      const { name, id } = decodedToken;
+      // const decodedToken = jwt_decode(token);
+      // const { name, id } = decodedToken;
 
       // Store user details in AsyncStorage
-      await AsyncStorage.setItem('userId', id);
-      await AsyncStorage.setItem('username', name);
+      // await AsyncStorage.setItem('userId', id);
+      // await AsyncStorage.setItem('username', name);
 
     } catch (error) {
       console.error('Failed to store token', error);
@@ -33,12 +33,10 @@ export default function Login() {
   const retrieveToken = async () => {
     try {
       const token = await AsyncStorage.getItem('token');
-      const userId = await AsyncStorage.getItem('userId');
-      const username = await AsyncStorage.getItem('username');
+      // const userId = await AsyncStorage.getItem('userId');
+      // const username = await AsyncStorage.getItem('username');
       if (token) {
         console.log('Token retrieved successfully');
-        console.log(userId)
-        console.log(username)
         return token;
       } else {
         console.log('Token not found');
@@ -69,25 +67,25 @@ export default function Login() {
   };
 
   const handleButtonPress = () => {
-    // axios.post('http://localhost:3005/login', { name, id })
-    //   .then(response => {
-    //     // Handle the response from the server
-    //     // setName({ name });
-    //     // console.log(name);
-    //     console.log(response)
-    //     if (response.data.status) {
-    //       // Login successful, navigate to the next screen
-    //       const token = response.data.token;
-    //       storeToken(token)
+    axios.post('http://localhost:3005/login', { name, id })
+      .then(response => {
+        // Handle the response from the server
+        // setName({ name });
+        // console.log(name);
+        console.log(response)
+        if (response.data.status) {
+          // Login successful, navigate to the next screen
+          const token = response.data.token;
+          storeToken(token)
 
           navigation.navigate('createjoin');
-    //     } else {
-    //       console.log('login unsuccessful');
-    //     }
-    //   })
-    //   .catch(error => {
-    //     console.log('error');
-    //   });
+        } else {
+          console.log('login unsuccessful');
+        }
+      })
+      .catch(error => {
+        console.log('error');
+      });
 
   };
 
@@ -148,27 +146,27 @@ const styles = StyleSheet.create({
     borderWidth: 0.5,
     borderColor: '#433C41',
     marginTop: 10,
-  },  
+  },
   loginbtn: {
     backgroundColor: '#A06D95',
-    borderRadius: 10, 
-    padding:5,
-    width:100,   
+    borderRadius: 10,
+    padding: 5,
+    width: 100,
     justifyContent: 'center',
     alignItems: 'center',
-    top:40,
+    top: 40,
   },
   loginText: {
     color: '#FFFFFF',
     fontSize: 18,
     fontWeight: 'bold',
-    justifyContent:'center',
-    alignItems:'center',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  loginText1:{
-    top:-100, 
+  loginText1: {
+    top: -100,
     fontSize: 20,
-    fontWeight: 'bold', 
-    color:'#8B1874'
+    fontWeight: 'bold',
+    color: '#8B1874'
   }
 });
