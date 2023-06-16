@@ -49,7 +49,7 @@ const MyScreen = () => {
   }, [])
   useEffect(() => {
     if (uid !== '') {
-      axios.get(`http://localhost:3005/users/${uid}/hasadminAccess`).then(response => {
+      axios.get(`https://backendshg-0jzh.onrender.com/users/${uid}/hasadminAccess`).then(response => {
         setIsadmin(response.data.hasAdminAccess)
         console.log(isadmin)
       })

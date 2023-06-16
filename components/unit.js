@@ -49,7 +49,7 @@ const MyScreen = () => {
   }, [])
   useEffect(() => {
     if (uid !== '') {
-      axios.get(`http://localhost:3005/users/${uid}/hasadminAccess`).then(response => {
+      axios.get(`https://backendshg-0jzh.onrender.com/users/${uid}/hasadminAccess`).then(response => {
         setIsadmin(response.data.hasAdminAccess)
         console.log(isadmin)
       })
@@ -99,7 +99,7 @@ const MyScreen = () => {
       <View style={styles.headingContainer}>
         <Text style={styles.heading}>Unit Data</Text>
         <TouchableOpacity style={styles.menuIconContainer} onPress={handleMenuPress}>
-          <MaterialIcons name="more-vert" size={24} color="white" />
+          <MaterialIcons name="more-vert" size={20} color="white" />
         </TouchableOpacity>
       </View>
       <Popover
@@ -143,18 +143,19 @@ const MyScreen = () => {
           </View>
         ))}
       </View>
+      {isadmin &&
+        <View style={styles.inputContainer}>
+          <TextInput
+            style={styles.input}
+            placeholder="Enter a message"
+            value={newMessage}
+            onChangeText={setNewMessage}
+          />
+          <TouchableOpacity style={styles.sendButton} onPress={handleAddMessage}>
+            <MaterialIcons name="send" size={24} color="white" />
+          </TouchableOpacity>
+        </View>}
 
-      <View style={styles.inputContainer}>
-        <TextInput
-          style={styles.input}
-          placeholder="Enter a message"
-          value={newMessage}
-          onChangeText={setNewMessage}
-        />
-        <TouchableOpacity style={styles.sendButton} onPress={handleAddMessage}>
-          <MaterialIcons name="send" size={24} color="white" />
-        </TouchableOpacity>
-      </View>
     </View>
   );
 };
@@ -208,7 +209,7 @@ const styles = StyleSheet.create({
   messageBox: {
     position: 'absolute',
     width: 365,
-    height: 250,
+    height: 600,
     left: 500,
     top: 58,
     borderRadius: 8,
@@ -272,7 +273,7 @@ const styles = StyleSheet.create({
     width: 350,
     height: 40,
     left: 500,
-    top: 318,
+    bottom: 40,
     paddingHorizontal: 10,
   },
   input: {
@@ -284,13 +285,13 @@ const styles = StyleSheet.create({
     borderColor: '#8B1874',
   },
   sendButton: {
-    width: 40,
-    height: 40,
+    width: 30,
+    height: 30,
     borderRadius: 20,
     backgroundColor: '#8B1874',
     justifyContent: 'center',
     alignItems: 'center',
-    marginLeft: 10,
+    marginLeft: 15,
   },
 });
 

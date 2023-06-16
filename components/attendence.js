@@ -7,6 +7,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import jwt_decode from "jwt-decode";
 import axios from 'axios';
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 const Attendance = () => {
   const navigation = useNavigation();
@@ -52,7 +53,7 @@ const Attendance = () => {
   useEffect(() => {
     // Fetch attendance data from the endpoint
     if (uid != '') {
-      axios.get(`http://localhost:3005/attendance/${uid}/${text}`)
+      axios.get(`https://backendshg-0jzh.onrender.com/attendance/${uid}/${text}`)
         .then(response => {
           console.log(text);
           const attendanceData = response.data;
@@ -70,7 +71,7 @@ const Attendance = () => {
 
   const toggleAttendance = (index) => {
     const updatedStudents = [...students];
-    updatedStudents[index].attendance = !updatedStudents[index].attendance;
+    updatedStudents[index].present = !updatedStudents[index].present;
     setStudents(updatedStudents);
   };
 
@@ -97,14 +98,14 @@ const Attendance = () => {
       presentUsers: students.map((student) => ({
         name: student.name,
         id: student.id,
-        present: student.attendance ? 1 : 0,
+        present: student.present ? 1 : 0,
       })),
     };
     console.log(postData);
 
     // Make the POST request to the server
     axios
-      .post('http://localhost:3005/attendance', postData)
+      .post('https://backendshg-0jzh.onrender.com/attendance', postData)
       .then((response) => {
         // Handle the response if needed
         console.log('Attendance data saved successfully');
@@ -126,11 +127,18 @@ const Attendance = () => {
             <Icon name="calendar" size={16} color="#8B1874" />
           </TouchableOpacity>
           {show && (
-            <DatePicker
-              selected={selectedDate}
+            // <DatePicker
+            //   selected={selectedDate}
+            //   onChange={handleDateChange}
+            //   dateFormat="dd/MM/yyyy"
+            //   style={styles.datepicker}
+            // />
+            <DateTimePicker
+              testID="dateTimePicker"
+              value={selectedDate}
+              mode={mode}
+              is24Hour={true}
               onChange={handleDateChange}
-              dateFormat="dd/MM/yyyy"
-              style={styles.datepicker}
             />
           )}
         </View>
@@ -154,14 +162,14 @@ const Attendance = () => {
                     <TouchableOpacity
                       style={[
                         styles.radioBtn,
-                        student.attendance && styles.radioBtnSelected,
+                        student.present && styles.radioBtnSelected,
                       ]}
                       onPress={() => toggleAttendance(index)}
                     >
-                      {student.attendance && <View style={styles.radioBtnInner} />}
+                      {student.present && <View style={styles.radioBtnInner} />}
                     </TouchableOpacity>
                     <Text style={styles.attendanceText}>
-                      {student.attendance ? 'Present' : 'Absent'}
+                      {student.present ? 'Present' : 'Absent'}
                     </Text>
                   </View>
                 </TouchableOpacity>
