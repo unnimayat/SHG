@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import Icon from 'react-native-vector-icons/FontAwesome';
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
+import Icon from 'react-native-vector-icons/FontAwesome'; 
+//import 'react-datepicker/dist/react-datepicker.css';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import jwt_decode from "jwt-decode";
 import axios from 'axios';
-import DateTimePicker from '@react-native-community/datetimepicker';
-
+// import DateTimePicker from '@react-native-community/datetimepicker'; 
+// import 'react-date-range/dist/theme/default.css'; // theme css file
+// import { Calendar } from 'react-date-range';
+import DatePicker from 'react-native-date-ranges';
 const Attendance = () => {
   const navigation = useNavigation();
   const currentDate = new Date();
@@ -133,13 +134,25 @@ const Attendance = () => {
             //   dateFormat="dd/MM/yyyy"
             //   style={styles.datepicker}
             // />
-            <DateTimePicker
-              testID="dateTimePicker"
-              value={selectedDate}
-              mode={mode}
-              is24Hour={true}
+            <DatePicker
+              style={{width:350,height:45}}
+              customStyles={{
+                placeholderText:{fontSize:20},
+                // headerStyle:{ },
+                // headerMarkTitle:{},
+                // contentInput:{},
+                // contentText:{},
+
+              }}
+              centerAlign
+              allowFontScaling={false}
+              mode={'range'} 
               onChange={handleDateChange}
             />
+            // <Calendar
+            //   date={new Date()}
+            //   onChange={this.handleDateChange}
+            // />
           )}
         </View>
         {!show && (
