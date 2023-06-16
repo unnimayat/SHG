@@ -47,7 +47,7 @@ export default function CreateJoin() {
 
   useEffect(() => {
     if (uid != '') {
-      axios.get(`http://localhost:3005/users/${uid}/invited`)
+      axios.get(`https://backendshg-0jzh.onrender.com/users/${uid}/invited`)
         .then(response => {
           const { is_invited } = response.data;
           console.log(is_invited)
@@ -78,7 +78,7 @@ export default function CreateJoin() {
   };
 
   const handleButtonPress = () => {
-    axios.post('http://localhost:3005/createunit', { unit_name, unit_id, uid })
+    axios.post('https://backendshg-0jzh.onrender.com/createunit', { unit_name, uid })
       .then(response => {
         console.log(response)
         if (response.data.status) {
