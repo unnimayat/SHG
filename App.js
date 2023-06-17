@@ -9,6 +9,8 @@ import unit from './components/unit';
 import dashboard from './components/dashboard'
 import editprofile from './components/editprofile';
 import members from "./components/members"
+import feed from "./components/feed"
+import sendinvitation from "./components/sendinvitation"
 const Stack = createNativeStackNavigator();
 
 const MyStack = () => {
@@ -28,6 +30,8 @@ const MyStack = () => {
         <Stack.Screen name='dashboard' component={dashboard} options={{title:''}}/>
         <Stack.Screen name='editprofile' component={editprofile} options={{title:''}}/>
         <Stack.Screen name='members' component={members} options={{title:''}}/>
+        <Stack.Screen name='sendinvitation' component={sendinvitation} options={{title:''}}/>
+        <Stack.Screen name='feed' component={feed} options={{title:''}}/>
       </Stack.Navigator>
     </NavigationContainer>
   );

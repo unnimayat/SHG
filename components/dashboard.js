@@ -3,7 +3,7 @@ import { StyleSheet, View, TouchableOpacity, Text, TextInput } from 'react-nativ
 import { useNavigation } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import jwt_decode from "jwt-decode";
+import jwt_decode from 'jwt-decode';
 import axios from 'axios';
 import { MaterialIcons } from '@expo/vector-icons';
 
@@ -28,12 +28,14 @@ const retrieveToken = async () => {
   }
 };
 
-export default function Dashboard() {
+const Dashboard = ({ route }) => {
   const [uname, setUname] = useState('');
   const [amount, setAmount] = useState(0);
   const [uid, setUId] = useState('');
   const [isadmin, setIsadmin] = useState(false);
   const navigation = useNavigation();
+  const { name, id, unit } = route.params;
+  console.log(route)
 
   const handleHomePress = () => {
     navigation.navigate('login');
@@ -53,9 +55,17 @@ export default function Dashboard() {
       const { name, id } = await retrieveToken();
       console.log(id);
       setUId(id);
+      setUname(name);
     };
     fetchData();
   }, []);
+  useEffect(() => {
+    if (route && route.params && route.params.member) {
+      const { name, id } = route.params.member;
+      setUId(id);
+      setUname(name);
+    }
+  }, [route]);
 
   const handleAddMessage = () => {
     axios
@@ -69,6 +79,8 @@ export default function Dashboard() {
       });
   };
 
+  const currentDate = new Date().toLocaleDateString();
+
   return (
     <View style={styles.container}>
       {/* Upper div */}
@@ -77,11 +89,17 @@ export default function Dashboard() {
           <View style={styles.profileCircle}>
             <Ionicons name="person-circle-outline" size={120} color="#A06D95" />
           </View>
-          <TouchableOpacity style={styles.editButton}>
-            <Ionicons name="pencil-outline" size={20} color="#FFFFFF" onPress={handleEditPress} />
+          <TouchableOpacity style={styles.editButton} onPress={handleEditPress}>
+            <Ionicons name="pencil-outline" size={20} color="#FFFFFF" />
           </TouchableOpacity>
         </View>
       </View>
+      
+      <View style={styles.info}>
+      <Text style={styles.name}>Name: {name}</Text>
+      <Text style={styles.id}>ID: {id}</Text>
+      <Text style={styles.id}>Unit: {unit}</Text>
+    </View>
 
       {/* Lower div */}
       <View style={styles.lowerDiv}>
@@ -89,16 +107,17 @@ export default function Dashboard() {
           {/* ... Contents ... */}
 
           <View style={styles.messageBox}>
+            <Text style={styles.date}>{currentDate}</Text>
             {/* ... Message Box Contents ... */}
             <TextInput
               style={styles.input}
-              placeholder="Enter amount paid"
-              value={amount.toString()}
+              placeholder="Enter the amount paid"
+              value={amount === 0 ? '' : amount.toString()}
               onChangeText={setAmount}
               keyboardType="numeric"
             />
             <TouchableOpacity style={styles.sendButton} onPress={handleAddMessage}>
-              <MaterialIcons name="send" size={24} color="white" />
+              <MaterialIcons name="send" size={20} color="white" />
             </TouchableOpacity>
           </View>
         </View>
@@ -113,12 +132,12 @@ export default function Dashboard() {
           <Ionicons name="create-outline" size={24} color="#FFFFFF" />
         </TouchableOpacity>
         <TouchableOpacity style={styles.navbarButton} onPress={handleProfilePress}>
-          <Ionicons name="person-outline" size={24} color="#FFFFFF" />
+          <Ionicons name="person-outline" size={20} color="#FFFFFF" />
         </TouchableOpacity>
       </View>
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -126,14 +145,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  heading: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#8B1874',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 55,
   },
   navbar: {
     flexDirection: 'row',
@@ -198,25 +209,6 @@ const styles = StyleSheet.create({
     right: 100,
     top: 75,
   },
-  content: {
-    left: 100,
-    marginTop: 15,
-    fontFamily: 'Inter',
-    fontStyle: 'normal',
-    fontWeight: '450',
-    fontSize: 14,
-    color: '#8B1874',
-  },
-  inputContainer: {
-    position: 'absolute',
-    flexDirection: 'row',
-    alignItems: 'center',
-    width: 350,
-    height: 40,
-    right: 1,
-    paddingHorizontal: 10,
-    backgroundColor: 'black',
-  },
   messageBox: {
     position: 'absolute',
     width: 320,
@@ -226,10 +218,56 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     bottom: '50%',
     left: '50%',
-    transform: [{ translateX: -50.5 }, { translateY: -25 }],
+    transform: [{ translateX: -60.5 }, { translateY: 150 }],
     zIndex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    borderRadius: 8,
+    marginBottom: 10,
+    shadowColor: '#8B1874',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+    backgroundColor: '#FFFFFF',
+  },
+  date: {
+    position: 'absolute',
+    top: 2,
+    right: 2,
+    color: '#777777',
+    fontSize: 12,
+  },
+  iconsContainer: {
+    flexDirection: 'row',
+  },
+  iconContainer: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#8B1874',
+    marginLeft: 8, // Adjust the value as needed
   },
 
+
+  inputContainer: {
+    position: 'absolute',
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: 350,
+    height: 40,
+    left: 500,
+    bottom: 40,
+    paddingHorizontal: 10,
+  },
   input: {
     flex: 1,
     borderRadius: 8,
@@ -239,12 +277,30 @@ const styles = StyleSheet.create({
     borderColor: '#8B1874',
   },
   sendButton: {
-    width: 40,
-    height: 40,
+    width: 30,
+    height: 30,
     borderRadius: 20,
     backgroundColor: '#8B1874',
     justifyContent: 'center',
     alignItems: 'center',
-    marginLeft: 10,
+    marginLeft: 15,
+  },
+  
+  info: {
+    position: 'absolute',
+    left: 2,
+    top: 300,
+    width: '100%',
+  },
+  name: {
+    fontSize: 16,
+    // fontWeight: 'bold',
+    color: '#A06D95',
+    marginBottom: 10,
+  },
+  id: {
+    fontSize: 16,
+    color: '#777777',
   },
 });
+export default Dashboard;

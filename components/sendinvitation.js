@@ -1,85 +1,67 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, TextInput, View, TouchableOpacity, Text } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
-// import jwt_decode from "jwt-decode";
+import jwt_decode from "jwt-decode";
 
 export default function SendInvitation() {
   const [name, setName] = useState('');
-  const [id, setId] = useState('');
+  const [id,setId]=useState('')
+  const [inviteId, setinviteId] = useState('');
+  const [inviteName,setInviteName]=useState('')
   const navigation = useNavigation();
+  const retrieveToken = async () => {
+    try {
+      const token = await AsyncStorage.getItem('token');
 
-//   const storeToken = async (token) => {
-//     try {
-//       await AsyncStorage.setItem('token', token);
-//       console.log('Token stored successfully');
-//       console.log(token)
+      if (token) {
+        console.log('Token retrieved successfully');
+        const decodedToken = jwt_decode(token);
+        const { name, id } = decodedToken;
+        console.log(name)
+        console.log(id)
+        return { name, id };
+      } else {
+        console.log('Token not found');
+        return null;
+      }
+    } catch (error) {
+      console.error('Failed to retrieve token', error);
+      return null;
+    }
+  };
 
-//       // Decode the token to get user details
-
-//       // const decodedToken = jwt_decode(token);
-//       // const { name, id } = decodedToken;
-
-//       // Store user details in AsyncStorage
-//       // await AsyncStorage.setItem('userId', id);
-//       // await AsyncStorage.setItem('username', name);
-
-//     } catch (error) {
-//       console.error('Failed to store token', error);
-//     }
-//   };
-
-//   const retrieveToken = async () => {
-//     try {
-//       const token = await AsyncStorage.getItem('token');
-//       // const userId = await AsyncStorage.getItem('userId');
-//       // const username = await AsyncStorage.getItem('username');
-//       if (token) {
-//         console.log('Token retrieved successfully');
-//         return token;
-//       } else {
-//         console.log('Token not found');
-//         return null;
-//       }
-//     } catch (error) {
-//       console.error('Failed to retrieve token', error);
-//       return null;
-//     }
-//   };
-
-//   const removeToken = async () => {
-//     try {
-//       await AsyncStorage.removeItem('token');
-//       console.log('Token removed successfully');
-//     } catch (error) {
-//       console.error('Failed to remove token', error);
-//     }
-//   };
-
-
+  useEffect(() => {
+    const fetchData = async () => {
+      const { name, id } = await retrieveToken();
+      console.log(id);
+      setId(id);
+    };
+    fetchData();
+  }, [])
+  // useEffect(()=>{
+  //   if(id){
+      
+  //   }
+  // },[id])
   const handleNameChange = (value) => {
-    setName(value);
+    setInviteName(value);
   };
 
   const handleIdChange = (value) => {
-    setId(value);
+    setinviteId(value);
   };
 
   const handleButtonPress = () => {
-    axios.post('http://localhost:3005/login', { name, id })
+    axios.post(`https://backendshg-0jzh.onrender.com/addusers`, { userId:id,id:inviteId })
       .then(response => {
-        // Handle the response from the server
-        // setName({ name });
-        // console.log(name);
+        console.log(id)
         console.log(response)
-        if (response.data.status) {
+        if (response) {
           // Login successful, navigate to the next screen
-          const token = response.data.token;
-          storeToken(token)
-
-          navigation.navigate('unit');
+           
         } else {
           console.log('added unsuccessfully');
         }
@@ -99,14 +81,14 @@ export default function SendInvitation() {
           style={styles.inputname}
           placeholder="Enter Name"
           placeholderTextColor="#9B6D92"
-          value={name}
+          value={inviteName}
           onChangeText={handleNameChange}
         />
         <TextInput
           style={styles.inputname}
           placeholder="Enter Id"
           placeholderTextColor="#9B6D92"
-          value={id}
+          value={inviteId}
           onChangeText={handleIdChange}
         />
         <TouchableOpacity style={styles.loginbtn} onPress={handleButtonPress}>

@@ -78,7 +78,7 @@ export default function Login() {
           const token = response.data.token;
           storeToken(token)
 
-          navigation.navigate('createjoin');
+          navigation.navigate('feed');
         } else {
           console.log('login unsuccessful');
         }

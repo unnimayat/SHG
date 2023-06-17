@@ -1,21 +1,84 @@
-import React from 'react';
-import { View, Text, StyleSheet, FlatList } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import jwt_decode from 'jwt-decode';
 
 const MemberListPage = () => {
-  const members = [
-    { id: 1, name: 'John Doe', attendance: 80, savings: 200 },
-    { id: 2, name: 'Jane Smith', attendance: 95, savings: 300 },
-    { id: 3, name: 'Alice Johnson', attendance: 75, savings: 150 },
-    { id: 4, name: 'Bob Anderson', attendance: 90, savings: 250 },
-  ];
+  const navigation = useNavigation();
+  const [members, setMembers] = useState([]);
+  const [id, setId] = useState('');
+
+  const retrieveToken = async () => {
+    try {
+      const token = await AsyncStorage.getItem('token');
+
+      if (token) {
+        console.log('Token retrieved successfully');
+        const decodedToken = jwt_decode(token);
+        const { id } = decodedToken;
+        console.log(id);
+        return id;
+      } else {
+        console.log('Token not found');
+        return null;
+      }
+    } catch (error) {
+      console.error('Failed to retrieve token', error);
+      return null;
+    }
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const id = await retrieveToken();
+      console.log(id);
+      setId(id);
+    };
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    if (id !== '') {
+      axios
+        .post('https://backendshg-0jzh.onrender.com/members', { id })
+        .then(response => {
+          console.log(response.data.members);
+          setMembers(response.data.members); // Store members data in the state
+        })
+        .catch(error => {
+          console.log('Error fetching members:', error);
+        });
+    }
+  }, [id]);
+
+  const fetchMemberDetails = (id) => {
+    const url = `https://backendshg-0jzh.onrender.com/dashboard/${id}`;
+    axios
+      .get(url)
+      .then(response => {
+        const memberData = response.data;
+        const { unitName,memberName } = memberData;
+        console.log(response.data)
+        console.log('Member Details:', {unitName,memberName});
+        navigation.navigate('dashboard', { name:memberName, id:id, unit:unitName }); // Navigate to 'Dashboard' screen with member details as route parameters
+      })
+      .catch(error => {
+        console.log('Error fetching member details:', error);
+      });
+  };
+
+  const handleMemberPress = (member) => {
+    fetchMemberDetails(member.id);
+  };
 
   const renderMemberItem = ({ item }) => {
     return (
-      <View style={styles.memberItem}>
+      <TouchableOpacity style={styles.memberItem} onPress={() => handleMemberPress(item)}>
         <Text style={styles.memberCell}>{item.name}</Text>
-        <Text style={styles.memberCell}>{item.attendance}%</Text>
-        <Text style={styles.memberCell}>${item.savings}</Text>
-      </View>
+        <Text style={styles.memberCell}>{item.id}</Text>
+      </TouchableOpacity>
     );
   };
 
@@ -24,8 +87,7 @@ const MemberListPage = () => {
       <Text style={styles.pageTitle}>Member List</Text>
       <View style={styles.tableHeader}>
         <Text style={styles.headerCell}>Name</Text>
-        <Text style={styles.headerCell}>Attendance</Text>
-        <Text style={styles.headerCell}>Savings</Text>
+        <Text style={styles.headerCell}>ID</Text>
       </View>
       <FlatList
         data={members}

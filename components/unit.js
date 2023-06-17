@@ -67,6 +67,8 @@ const MyScreen = () => {
       navigation.navigate('login');
     } else if (item === 'Members') {
       navigation.navigate('members');
+    }else if (item === 'SendInvitation') {
+      navigation.navigate('sendinvitation');
     }
 
     // Close the menu
@@ -109,6 +111,9 @@ const MyScreen = () => {
         popoverStyle={styles.menuPopover}
         overlayStyle={styles.overlayStyle}
       >
+        {isadmin && <TouchableOpacity style={styles.menuItem} onPress={() => handleMenuItemPress('SendInvitation')}>
+          <Text>Add Member</Text>
+        </TouchableOpacity>}
         <TouchableOpacity style={styles.menuItem} onPress={() => handleMenuItemPress('Attendance')}>
           <Text>Attendance</Text>
         </TouchableOpacity>

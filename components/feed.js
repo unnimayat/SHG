@@ -11,13 +11,13 @@ import axios from 'axios';
 
 export default function CreateJoin() {
   const [unit_name, setName] = useState('');
-  const [unit_id, setunitId] = useState('');
+  const [unit_id, setId] = useState('');
   const [createLabel, setCreateLabel] = useState(true);
   const [joinLabel, setJoinLabel] = useState(false);
   const navigation = useNavigation();
   const [uid, setUId] = useState('')
   const [invitestatus, setInvitestatus] = useState(null)
-  const [invitation,setInvitation]=useState(false);
+  const [invitation,setInvitation]=useState(true);
 
   const retrieveToken = async () => {
     try {
@@ -79,24 +79,8 @@ export default function CreateJoin() {
   const handleButtonJoinPress = () => {
     setCreateLabel(false);
     setJoinLabel(true);
-    axios.get(`https://backendshg-0jzh.onrender.com/invitedunits/${uid}`)
-    .then(response=>{
-      console.log(response);
-      const {unitId,unitName}=response.data;
-      setInvitation(true);
-      setName(unitName);
-      setunitId(unitId);
-    })
   };
 
-
-const handleButtonJoin=()=>{
-axios.post('https://backendshg-0jzh.onrender.com/joinunit',{unitId:unit_id,userId:uid})
-.then(response=>{
-  console.log(response);
-  console.log('hi');
-})
-  }
   const handleButtonPress = () => {
     axios.post('https://backendshg-0jzh.onrender.com/createunit', { unit_name, uid })
       .then(response => {
@@ -116,7 +100,7 @@ axios.post('https://backendshg-0jzh.onrender.com/joinunit',{unitId:unit_id,userI
   };
 
   const handleHomePress = () => {
-    navigation.navigate('login');
+    navigation.navigate('feed');
   };
   const handleProfilePress = () => {
     navigation.navigate('dashboard');
@@ -132,60 +116,7 @@ axios.post('https://backendshg-0jzh.onrender.com/joinunit',{unitId:unit_id,userI
 
   return (
     <View style={styles.container}>
-      {/* button */}
-      <View style={styles.topbutton}>
-        <TouchableOpacity
-          style={[styles.topButton, createLabel ? styles.selectedButton : styles.nonselectedButton]}
-          onPress={handleButtonCreatePress}
-        >
-          <Text style={[styles.buttonText, createLabel ? styles.selectedButtonText : styles.nonselectedButtonText]}>CREATE</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.topButton, joinLabel ? styles.selectedButton : styles.nonselectedButton]}
-          onPress={handleButtonJoinPress}
-        >
-          <Text style={[styles.buttonText, joinLabel ? styles.selectedButtonText : styles.nonselectedButtonText]}>JOIN</Text>
-        </TouchableOpacity>
-      </View>
-
-      {/* label */}
-      {createLabel ? (
-        <View style={styles.label}>
-          <Text style={styles.loginText1}>CREATE</Text>
-          <TextInput
-            style={styles.inputname}
-            placeholder="Enter Unit Name"
-            placeholderTextColor="#9B6D92"
-            value={unit_name}
-            onChangeText={handleNameChange}
-          />
-          <TextInput
-            style={styles.inputname}
-            placeholder="Enter Unit Id"
-            placeholderTextColor="#9B6D92"
-            value={unit_id}
-            onChangeText={handleIdChange}
-          />
-          <TouchableOpacity style={styles.loginbtn} onPress={handleButtonPress}>
-            <Text style={styles.loginText}>CREATE</Text>
-          </TouchableOpacity>
-        </View>
-      ) : (<view>{ invitation?(
-        <View style={styles.label}>
-          <Text style={styles.loginText1}>JOIN</Text>
-          <View style={styles.container}>
-            <Icon name="drafts" size={30} color="#A06D95" style={styles.icon} />
-            <Text style={styles.loginText1}>Invitation from Group {unit_name}</Text>
-            <TouchableOpacity style={styles.loginbtn} onPress={handleButtonJoin}>
-            <Text style={styles.loginText}>JOIN</Text>
-          </TouchableOpacity>
-          </View>
-        </View>
-      ):(<View style={styles.label}>
-        <Text style={styles.loginText1}>Sorry You have no invitation</Text>
-      </View>)
-        
-      }</view>)}
+       <Text style={styles.loginText1}>No posts yet</Text>
 
       {/* navbar */}
       <View style={styles.navbar}>

@@ -6,10 +6,8 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import jwt_decode from "jwt-decode";
 import axios from 'axios';
-import DatePicker from '@react-native-community/datetimepicker'; 
-// import 'react-date-range/dist/theme/default.css'; // theme css file
-// // import { Calendar } from 'react-date-range';
-// import DatePicker from 'react-native-date-ranges';
+// import DatePicker from '@react-native-community/datetimepicker'; 
+ 
 const Attendance = () => {
   const navigation = useNavigation();
   const currentDate = new Date();
@@ -128,24 +126,14 @@ const Attendance = () => {
             <Icon name="calendar" size={16} color="#8B1874" />
           </TouchableOpacity>
           {show && (
-            <DatePicker
-              selected={selectedDate}
-              onChange={handleDateChange}
-              dateFormat="dd/MM/yyyy"
-              style={styles.datepicker}
-            />
             // <DatePicker
-            //   style={{width:350,height:45}}
-            //   customStyles={{
-            //     placeholderText:{fontSize:20},
-                
-
-            //   }}
-            //   centerAlign
-            //   allowFontScaling={false}
-            //   mode={'range'} 
+            //   selected={selectedDate}
             //   onChange={handleDateChange}
+            //   dateFormat="dd/MM/yyyy"
+            //   style={styles.datepicker}
             // />
+             
+            <View></View>
             
           )}
         </View>
