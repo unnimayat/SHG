@@ -143,7 +143,7 @@ const MyScreen = () => {
           </View>
         ))}
       </View>
-      {isadmin &&
+      {/* {isadmin &&
         <View style={styles.inputContainer}>
           <TextInput
             style={styles.input}
@@ -154,7 +154,7 @@ const MyScreen = () => {
           <TouchableOpacity style={styles.sendButton} onPress={handleAddMessage}>
             <MaterialIcons name="send" size={24} color="white" />
           </TouchableOpacity>
-        </View>}
+        </View>} */}
 
     </View>
   );
