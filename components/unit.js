@@ -55,6 +55,21 @@ const MyScreen = () => {
       })
     }
   }, [uid])
+  useEffect(()=>{
+    // if(isadmin)
+    // {
+      const fetch=async()=>{
+     await axios.get(`https://backendshg-0jzh.onrender.com/proposals/${uid}/not-voted`).then(response=>{
+        console.log('working');
+        console.log(response.data.description);
+        setMessages(response.data);
+        console.log(messages);
+      }
+      )
+  }
+    fetch()
+    // }
+  },[uid])
   const handleMenuPress = () => {
     setMenuVisible(true);
   };
@@ -82,16 +97,24 @@ const MyScreen = () => {
     }
   };
 
-  const handleAgree = (index) => {
+  const handleAgree = (index,mid) => {
     const updatedMessages = [...messages];
     updatedMessages[index].agreed = !updatedMessages[index].agreed;
     setMessages(updatedMessages);
+
+    axios.post(`https://backendshg-0jzh.onrender.com/proposals/vote`,{id:mid,userId:uid,vote:1}).then(response=>{
+      console.log(response);
+    })
   };
 
-  const handleDisagree = (index) => {
+  const handleDisagree = (index,mid) => {
     const updatedMessages = [...messages];
     updatedMessages[index].agreed = false;
     setMessages(updatedMessages);
+
+    axios.post(`https://backendshg-0jzh.onrender.com/proposals/vote`,{id:mid,userId:uid,vote:-1}).then(response=>{
+      console.log(response);
+    })
   };
 
 
@@ -130,17 +153,17 @@ const MyScreen = () => {
       <View style={styles.messageBox}>
         {messages.map((message, index) => (
           <View key={index} style={[styles.messageItem, styles.messageContainer]}>
-            <Text style={styles.messageContent}>{message.content}</Text>
+            <Text style={styles.messageContent}>{message.description}</Text>
             <View style={styles.iconsContainer}>
               <TouchableOpacity
                 style={[styles.iconContainer, message.agreed && styles.agreedIcon]}
-                onPress={() => handleAgree(index)}
+                onPress={() => handleAgree(index,message._id)}
               >
                 <MaterialIcons name="thumb-up" size={18} color="white" />
               </TouchableOpacity>
               <TouchableOpacity
                 style={[styles.iconContainer, !message.agreed && styles.disagreedIcon]}
-                onPress={() => handleDisagree(index)}
+                onPress={() => handleDisagree(index,message._id)}
               >
                 <MaterialIcons name="thumb-down" size={18} color="white" />
               </TouchableOpacity>

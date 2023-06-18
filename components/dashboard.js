@@ -32,10 +32,19 @@ const Dashboard = ({ route }) => {
   const [uname, setUname] = useState('');
   const [amount, setAmount] = useState(0);
   const [uid, setUId] = useState('');
+  const [userid, setUserId] = useState('');
   const [isadmin, setIsadmin] = useState(false);
+  const [paymentId,setpaymentId]=useState('');
+  const [description,setDescription]=useState('');
+
   const navigation = useNavigation();
+
   const { name, id, unit } = route.params;
   console.log(route)
+
+  const tableData = [
+    { date: '2023-06-01', amount: 100 },
+  ];
 
   const handleHomePress = () => {
     navigation.navigate('login');
@@ -59,20 +68,33 @@ const Dashboard = ({ route }) => {
     };
     fetchData();
   }, []);
+
   useEffect(() => {
-    if (route && route.params && route.params.member) {
-      const { name, id } = route.params.member;
-      setUId(id);
-      setUname(name);
+    if (uid !== '') {
+      axios.get(`https://backendshg-0jzh.onrender.com/users/${uid}/hasadminAccess`).then(response => {
+        setIsadmin(response.data.hasAdminAccess)
+        console.log(isadmin)
+      })
     }
-  }, [route]);
+  }, [uid])
+
+  // useEffect(() => {
+  //   if (route && route.params && route.params.member) {
+  //     const { name, id,unit } = route.params.member;
+  //     setUserId(id);
+  //     setUname(name);
+  //   }
+  // }, [route]);
 
   const handleAddMessage = () => {
     axios
-      .post('https://backendshg-0jzh.onrender.com/makepayment', { userID: uid, id: uid, amt: amount })
+      .post('https://backendshg-0jzh.onrender.com/makepayment', { userID: uid, id: id, amt: amount })
       .then(response => {
+        console.log('Requested to make payment')
+        console.log({userID: uid, id: id, amt: amount})
         console.log(response.data);
-        navigation.navigate('PaymentSummary', { paymentData: response.data });
+        setpaymentId(response.data.paymentId); 
+        navigation.navigate('unit');
       })
       .catch(error => {
         console.log('Error:', error);
@@ -105,8 +127,17 @@ const Dashboard = ({ route }) => {
       <View style={styles.lowerDiv}>
         <View style={styles.contents}>
           {/* ... Contents ... */}
-
-          <View style={styles.messageBox}>
+          {/* <View style={styles.tableContainer}>
+            <Text style={styles.tableHeaderText}>Date</Text>
+            <Text style={styles.tableHeaderText}>Amount</Text>
+            {tableData.map((item, index) => (
+              <View key={index} style={styles.tableRow}>
+                <Text style={styles.rowDate}>{item.date}</Text>
+                <Text style={styles.rowAmount}>{item.amount}</Text>
+              </View>
+            ))}
+          </View> */}
+          {isadmin && <View style={styles.messageBox}>
             <Text style={styles.date}>{currentDate}</Text>
             {/* ... Message Box Contents ... */}
             <TextInput
@@ -119,7 +150,8 @@ const Dashboard = ({ route }) => {
             <TouchableOpacity style={styles.sendButton} onPress={handleAddMessage}>
               <MaterialIcons name="send" size={20} color="white" />
             </TouchableOpacity>
-          </View>
+          </View>}
+          
         </View>
       </View>
 
@@ -301,6 +333,37 @@ const styles = StyleSheet.create({
   id: {
     fontSize: 16,
     color: '#777777',
+  },
+  tableContainer: {
+    marginTop: 20,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#A06D95',
+    borderRadius: 8,
+    padding: 10,
+    marginBottom: 20,
+    width:200,
+    height:200,
+  },
+  tableHeaderText: {
+    fontWeight: 'bold',
+    fontSize: 16,
+    marginBottom: 5,
+  },
+  tableRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  rowDate: {
+    flex: 1,
+    fontSize: 14,
+  },
+  rowAmount: {
+    flex: 1,
+    fontSize: 14,
+    textAlign: 'right',
   },
 });
 export default Dashboard;
