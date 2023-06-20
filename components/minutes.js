@@ -6,7 +6,7 @@ import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import jwt_decode from "jwt-decode";
 import axios from 'axios';
-
+import { useTranslation } from 'react-i18next';
 const { width } = Dimensions.get('window');
 
 const MyScreen = () => {

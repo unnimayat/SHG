@@ -4,7 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 //import Ionicons from 'react-native-vector-icons/Ionicons';
 import { Ionicons } from '@expo/vector-icons';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-
+import { useTranslation } from 'react-i18next';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import jwt_decode from "jwt-decode";
 import axios from 'axios';
@@ -18,6 +18,14 @@ export default function CreateJoin() {
   const [uid, setUId] = useState('')
   const [invitestatus, setInvitestatus] = useState(null)
   const [invitation,setInvitation]=useState(false);
+
+  
+  const options = [
+    { label: 'english', value: 'en' },
+    { label: 'malayalam', value: 'mal' }
+  ];
+
+  const { t, i18n } = useTranslation();
 
   const retrieveToken = async () => {
     try {
@@ -138,51 +146,51 @@ axios.post('https://backendshg-0jzh.onrender.com/joinunit',{unitId:unit_id,userI
           style={[styles.topButton, createLabel ? styles.selectedButton : styles.nonselectedButton]}
           onPress={handleButtonCreatePress}
         >
-          <Text style={[styles.buttonText, createLabel ? styles.selectedButtonText : styles.nonselectedButtonText]}>CREATE</Text>
+          <Text style={[styles.buttonText, createLabel ? styles.selectedButtonText : styles.nonselectedButtonText]}>{t(CREATE)}</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={[styles.topButton, joinLabel ? styles.selectedButton : styles.nonselectedButton]}
           onPress={handleButtonJoinPress}
         >
-          <Text style={[styles.buttonText, joinLabel ? styles.selectedButtonText : styles.nonselectedButtonText]}>JOIN</Text>
+          <Text style={[styles.buttonText, joinLabel ? styles.selectedButtonText : styles.nonselectedButtonText]}>{t(JOIN)}</Text>
         </TouchableOpacity>
       </View>
 
       {/* label */}
       {createLabel ? (
         <View style={styles.label}>
-          <Text style={styles.loginText1}>CREATE</Text>
+          <Text style={styles.loginText1}>{t(CREATE)}</Text>
           <TextInput
             style={styles.inputname}
-            placeholder="Enter Unit Name"
+            placeholder={t("Enter Unit Name")}
             placeholderTextColor="#9B6D92"
             value={unit_name}
             onChangeText={handleNameChange}
           />
           <TextInput
             style={styles.inputname}
-            placeholder="Enter Unit Id"
+            placeholder={t("Enter Unit Id")}
             placeholderTextColor="#9B6D92"
             value={unit_id}
             onChangeText={handleIdChange}
           />
           <TouchableOpacity style={styles.loginbtn} onPress={handleButtonPress}>
-            <Text style={styles.loginText}>CREATE</Text>
+            <Text style={styles.loginText}>{t(CREATE)}</Text>
           </TouchableOpacity>
         </View>
       ) : (<view>{ invitation?(
         <View style={styles.label}>
-          <Text style={styles.loginText1}>JOIN</Text>
+          <Text style={styles.loginText1}>{t(JOIN)}</Text>
           <View style={styles.container}>
             <Icon name="drafts" size={30} color="#A06D95" style={styles.icon} />
             <Text style={styles.loginText1}>Invitation from Group {unit_name}</Text>
             <TouchableOpacity style={styles.loginbtn} onPress={handleButtonJoin}>
-            <Text style={styles.loginText}>JOIN</Text>
+            <Text style={styles.loginText}>{t(JOIN)}</Text>
           </TouchableOpacity>
           </View>
         </View>
       ):(<View style={styles.label}>
-        <Text style={styles.loginText1}>Sorry You have no invitation</Text>
+        <Text style={styles.loginText1}>{t("Sorry You have no invitation")}</Text>
       </View>)
         
       }</view>)}

@@ -6,6 +6,17 @@
         "Sorry You have no invitation": "ക്ഷമിക്കണം നിങ്ങൾക്ക് ക്ഷണമില്ല",
         "login": "ലോഗിൻ",
         "Enter Name": "പേര് നൽകുക",
-        "Enter Id":"ഐഡി നൽകുക"
+        "Enter Id":"ഐഡി നൽകുക",
+        "CREATE":"സൃഷ്ടിക്കുക",
+        "JOIN":"ചേരുക",
+        "Enter Unit Name":"യൂണിറ്റിന്റെ പേര് നൽകുക",
+        "Enter Unit Id":"യൂണിറ്റിന്റെ ഐഡി നൽകുക",
+        "Invitation from Group":"ഗ്രൂപ്പിൽ നിന്നുള്ള ക്ഷണം",
+        "Announcements":"അറിയിപ്പുകൾ",
+        "Message":"സന്ദേശം",
+        "Enter the amount paid":"അടച്ച തുക നൽകുക",
+        "No posts yet":"ഇതുവരെ പോസ്റ്റുകളില്ല",
+        "Unit Data":"യൂണിറ്റ് ഡാറ്റ",
+        "Vote":"വോട്ട് ചെയ്യുക"
     }
 }

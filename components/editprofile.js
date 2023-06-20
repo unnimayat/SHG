@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { StyleSheet, View, TextInput, TouchableOpacity, Text } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useNavigation } from '@react-navigation/native';
+import { useTranslation } from 'react-i18next';
 export default function EditProfile() {
   
   const navigation = useNavigation();
@@ -13,6 +14,13 @@ export default function EditProfile() {
   const handleSaveProfile = () => { 
     navigation.navigate('dashboard');
   };
+  
+  const options = [
+    { label: 'english', value: 'en' },
+    { label: 'malayalam', value: 'mal' }
+  ];
+
+  const { t, i18n } = useTranslation();
 
   return (
     <View style={styles.container}>

@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet, Dimensions, TextInput } from 
 import { MaterialIcons } from '@expo/vector-icons';
 import Popover from 'react-native-popover-view';
 import { useNavigation } from '@react-navigation/native';
-
+import { useTranslation } from 'react-i18next';
 const { width } = Dimensions.get('window');
 
 const MyScreen = () => {
@@ -15,6 +15,13 @@ const MyScreen = () => {
   const handleMenuPress = () => {
     setMenuVisible(true);
   };
+   
+  const options = [
+    { label: 'english', value: 'en' },
+    { label: 'malayalam', value: 'mal' }
+  ];
+
+  const { t, i18n } = useTranslation();
 
   const handleMenuItemPress = (item) => {
     // Handle the press event for the selected menu item
@@ -54,7 +61,7 @@ const MyScreen = () => {
   return (
     <View style={styles.container}>
       <View style={styles.headingContainer}>
-        <Text style={styles.heading}>Announcements</Text>
+        <Text style={styles.heading}>{t(Announcements)}</Text>
        
       </View>
       
@@ -72,7 +79,7 @@ const MyScreen = () => {
       <View style={styles.inputContainer}>
         <TextInput
           style={styles.input}
-          placeholder="Message"
+          placeholder={t("Message")}
           value={newMessage}
           onChangeText={setNewMessage}
         />

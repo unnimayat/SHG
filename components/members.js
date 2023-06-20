@@ -4,7 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import jwt_decode from 'jwt-decode';
-
+import { useTranslation } from 'react-i18next';
 const MemberListPage = () => {
   const navigation = useNavigation();
   const [members, setMembers] = useState([]);

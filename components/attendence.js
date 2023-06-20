@@ -7,16 +7,24 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import jwt_decode from "jwt-decode";
 import axios from 'axios';
 // import DatePicker from '@react-native-community/datetimepicker'; 
- 
+import { useTranslation } from 'react-i18next';
 const Attendance = () => {
   const navigation = useNavigation();
   const currentDate = new Date();
   const [students, setStudents] = useState([]);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [show, setShow] = useState(false);
-  const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
+  const options1 = { day: '2-digit', month: '2-digit', year: 'numeric' };
   const [text, setText] = useState('');
   const [uid, setUId] = useState('')
+
+  
+  const options = [
+    { label: 'english', value: 'en' },
+    { label: 'malayalam', value: 'mal' }
+  ];
+
+  const { t, i18n } = useTranslation();
 
   const retrieveToken = async () => {
     try {

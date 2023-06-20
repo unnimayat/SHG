@@ -4,7 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 //import Ionicons from 'react-native-vector-icons/Ionicons';
 import { Ionicons } from '@expo/vector-icons';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-
+import { useTranslation } from 'react-i18next';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import jwt_decode from "jwt-decode";
 import axios from 'axios';
@@ -18,6 +18,13 @@ export default function CreateJoin() {
   const [uid, setUId] = useState('')
   const [invitestatus, setInvitestatus] = useState(null)
   const [invitation,setInvitation]=useState(true);
+  
+  const options = [
+    { label: 'english', value: 'en' },
+    { label: 'malayalam', value: 'mal' }
+  ];
+
+  const { t, i18n } = useTranslation();
 
   const retrieveToken = async () => {
     try {
@@ -116,7 +123,7 @@ export default function CreateJoin() {
 
   return (
     <View style={styles.container}>
-       <Text style={styles.loginText1}>No posts yet</Text>
+       <Text style={styles.loginText1}>{t("No posts yet")}</Text>
 
       {/* navbar */}
       <View style={styles.navbar}>

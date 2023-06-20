@@ -22,30 +22,13 @@ export default function Home({ navigation }) {
           <Image source={require('../assets/shg.png')} style={styles.image} />
         </View>
       </View>
-      <SwitchSelector options={options} onPress={(language) => {
-        alert(language)
+      <SwitchSelector options={options} onPress={(language) => { 
         i18n.changeLanguage(language)
-      }} />
+      }} style={[styles.toggle, { borderColor: '#8B1874' }]}
+      buttonColor="#8B1874" />
 
       <View style={styles.container2}>
-        <View>
-          {/* button */}
-          <View style={styles.topbutton}>
-            <TouchableOpacity
-              style={[styles.topButton, 1 ? styles.selectedButton : styles.nonselectedButton]}
-            // onPress={handleButtonCreatePress}
-            >
-              <Text style={[styles.buttonText, 1 ? styles.selectedButtonText : styles.nonselectedButtonText]}>CREATE</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.topButton, 1 ? styles.nonselectedButton : styles.selectedButton]}
-            // onPress={handleButtonJoinPress}
-            >
-              <Text style={[styles.buttonText, 1 ? styles.nonselectedButtonText : styles.selectedButtonText]}>JOIN</Text>
-            </TouchableOpacity>
-          </View>
-
-          
+        <View>         
           <CustomButton
             title={t("Getstarted")}
             onPress={pressHandler}
@@ -58,6 +41,13 @@ export default function Home({ navigation }) {
 }
 
 const styles = StyleSheet.create({
+  toggle:{ 
+    width:160,
+    height:20,
+    bottom:300,
+    left:150
+  },
+
   container: {
     flex: 1,
     justifyContent: 'center',

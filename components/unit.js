@@ -6,7 +6,7 @@ import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import jwt_decode from "jwt-decode";
 import axios from 'axios';
-
+import { useTranslation } from 'react-i18next';
 const { width } = Dimensions.get('window');
 
 const MyScreen = () => {
@@ -16,6 +16,14 @@ const MyScreen = () => {
   const [newMessage, setNewMessage] = useState('');
   const [uid, setUId] = useState('')
   const [isadmin, setIsadmin] = useState(false);
+  
+  
+  const options = [
+    { label: 'english', value: 'en' },
+    { label: 'malayalam', value: 'mal' }
+  ];
+
+  const { t, i18n } = useTranslation();
 
 
   const retrieveToken = async () => {
@@ -130,7 +138,7 @@ const MyScreen = () => {
   return (
     <View style={styles.container}>
       <View style={styles.headingContainer}>
-        <Text style={styles.heading} onPress={handleRefresh}>Unit Data</Text>
+        <Text style={styles.heading} onPress={handleRefresh}>{t("Unit Data")}</Text>
         <TouchableOpacity style={styles.menuIconContainer} onPress={handleMenuPress}>
           <MaterialIcons name="more-vert" size={20} color="white" />
         </TouchableOpacity>
@@ -143,7 +151,7 @@ const MyScreen = () => {
         overlayStyle={styles.overlayStyle}
       >
         {isadmin && <TouchableOpacity style={styles.menuItem} onPress={() => handleMenuItemPress('SendInvitation')}>
-          <Text>Add Member</Text>
+          <Text>{t("Add Member")}</Text>
         </TouchableOpacity>}
         <TouchableOpacity style={styles.menuItem} onPress={() => handleMenuItemPress('Attendance')}>
           <Text>Attendance</Text>
@@ -159,6 +167,7 @@ const MyScreen = () => {
         </TouchableOpacity>
       </Popover>
       <View style={styles.messageBox}>
+        <Text style={styles.vote} onPress={handleRefresh}>{t("Vote")}</Text>
         {messages.map((message, index) => (
           <View key={index} style={[styles.messageItem, styles.messageContainer]}>
             <Text style={styles.messageContent}>{message.description}</Text>
@@ -215,6 +224,11 @@ const styles = StyleSheet.create({
   heading: {
     color: '#FFFFFF',
     fontSize: 20,
+    fontWeight: 'bold',
+  },
+  vote:{
+    color: '#A06D95',
+    fontSize: 16,
     fontWeight: 'bold',
   },
   menuIconContainer: {
