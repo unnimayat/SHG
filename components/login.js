@@ -4,11 +4,13 @@ import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import jwt_decode from "jwt-decode";
+import { useTranslation } from 'react-i18next';
 
 export default function Login() {
   const [name, setName] = useState('');
   const [id, setId] = useState('');
   const navigation = useNavigation();
+  const { t, i18n } = useTranslation();
 
   const storeToken = async (token) => {
     try {
@@ -93,23 +95,23 @@ export default function Login() {
   return (
     <View style={styles.container}>
       <View style={styles.label}>
-        <Text style={styles.loginText1}>LOGIN</Text>
+        <Text style={styles.loginText1}>{t('login')}</Text>
         <TextInput
           style={styles.inputname}
-          placeholder="Enter Name"
+          placeholder={t("Enter Name")}
           placeholderTextColor="#9B6D92"
           value={name}
           onChangeText={handleNameChange}
         />
         <TextInput
           style={styles.inputname}
-          placeholder="Enter Id"
+          placeholder={t("Enter Id")}
           placeholderTextColor="#9B6D92"
           value={id}
           onChangeText={handleIdChange}
         />
         <TouchableOpacity style={styles.loginbtn} onPress={handleButtonPress}>
-          <Text style={styles.loginText}>LOGIN</Text>
+          <Text style={styles.loginText}>{t('login')}</Text>
         </TouchableOpacity>
       </View>
     </View>
