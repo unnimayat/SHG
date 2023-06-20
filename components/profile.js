@@ -28,7 +28,7 @@ const retrieveToken = async () => {
   }
 };
 
-const Dashboard = ({ route }) => {
+const Profile = () => {
   const [uname, setUname] = useState('');
   const [amount, setAmount] = useState(0);
   const [uid, setUId] = useState('');
@@ -36,26 +36,12 @@ const Dashboard = ({ route }) => {
   const [isadmin, setIsadmin] = useState(false);
   const [paymentId,setpaymentId]=useState('');
   const [description,setDescription]=useState('');
-  
-  const [invitestatus, setInvitestatus] = useState(null)
 
   const navigation = useNavigation();
 
-  const { name, id, unit } = route.params;
-  console.log(route)
+//   const { name, id, unit } = route.params;
+//   console.log(route)
 
-  const tableData = [
-    { date: '2023-06-01', amount: 100 },
-  ];
-  const handleCreatePress = () => {
-    console.log("Pressed join channel")
-    console.log(invitestatus)
-    if (invitestatus === 2) {
-      navigation.navigate('unit');
-      location.reload();
-    }
-    else { navigation.navigate('unit'); }
-  };
   const handleHomePress = () => {
     navigation.navigate('feed');
   };
@@ -65,6 +51,14 @@ const Dashboard = ({ route }) => {
   const handleEditPress = () => {
     navigation.navigate('editprofile');
   };
+  const handleCreatePress = () => {
+    console.log("Pressed join channel")
+    console.log(invitestatus)
+    if (invitestatus === 2) {
+      navigation.navigate('unit');
+    }
+    else { navigation.navigate('createjoin'); }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -72,18 +66,19 @@ const Dashboard = ({ route }) => {
       console.log(id);
       setUId(id);
       setUname(name);
+      console.log('hello')
     };
     fetchData();
   }, []);
 
-  useEffect(() => {
-    if (uid !== '') {
-      axios.get(`https://backendshg-0jzh.onrender.com/users/${uid}/hasadminAccess`).then(response => {
-        setIsadmin(response.data.hasAdminAccess)
-        console.log(isadmin)
-      })
-    }
-  }, [uid])
+//   useEffect(() => {
+//     if (uid !== '') {
+//       axios.get(`https://backendshg-0jzh.onrender.com/users/${uid}/hasadminAccess`).then(response => {
+//         setIsadmin(response.data.hasAdminAccess)
+//         console.log(isadmin)
+//       })
+//     }
+//   }, [uid])
 
   // useEffect(() => {
   //   if (route && route.params && route.params.member) {
@@ -93,22 +88,22 @@ const Dashboard = ({ route }) => {
   //   }
   // }, [route]);
 
-  const handleAddMessage = () => {
-    axios
-      .post('https://backendshg-0jzh.onrender.com/makepayment', { userID: uid, id: id, amt: amount })
-      .then(response => {
-        console.log('Requested to make payment')
-        console.log({userID: uid, id: id, amt: amount})
-        console.log(response.data);
-        setpaymentId(response.data.paymentId); 
-        handleCreatePress();
-      })
-      .catch(error => {
-        console.log('Error:', error);
-      });
-  };
+//   const handleAddMessage = () => {
+//     axios
+//       .post('https://backendshg-0jzh.onrender.com/makepayment', { userID: uid, id: id, amt: amount })
+//       .then(response => {
+//         console.log('Requested to make payment')
+//         console.log({userID: uid, id: id, amt: amount})
+//         console.log(response.data);
+//         setpaymentId(response.data.paymentId); 
+//         navigation.navigate('unit');
+//       })
+//       .catch(error => {
+//         console.log('Error:', error);
+//       });
+//   };
 
-  const currentDate = new Date().toLocaleDateString();
+//   const currentDate = new Date().toLocaleDateString();
 
   return (
     <View style={styles.container}>
@@ -124,11 +119,11 @@ const Dashboard = ({ route }) => {
         </View>
       </View>
       
-      <View style={styles.info}>
+      {/* <View style={styles.info}>
       <Text style={styles.name}>Name: {name}</Text>
       <Text style={styles.id}>ID: {id}</Text>
       <Text style={styles.id}>Unit: {unit}</Text>
-    </View>
+    </View> */}
 
       {/* Lower div */}
       <View style={styles.lowerDiv}>
@@ -144,20 +139,7 @@ const Dashboard = ({ route }) => {
               </View>
             ))}
           </View> */}
-          {isadmin && <View style={styles.messageBox}>
-            <Text style={styles.date}>{currentDate}</Text>
-            {/* ... Message Box Contents ... */}
-            <TextInput
-              style={styles.input}
-              placeholder="Enter the amount paid"
-              value={amount === 0 ? '' : amount.toString()}
-              onChangeText={setAmount}
-              keyboardType="numeric"
-            />
-            <TouchableOpacity style={styles.sendButton} onPress={handleAddMessage}>
-              <MaterialIcons name="send" size={20} color="white" />
-            </TouchableOpacity>
-          </View>}
+           
           
         </View>
       </View>
@@ -373,4 +355,4 @@ const styles = StyleSheet.create({
     textAlign: 'right',
   },
 });
-export default Dashboard;
+export default Profile;

@@ -116,10 +116,10 @@ axios.post('https://backendshg-0jzh.onrender.com/joinunit',{unitId:unit_id,userI
   };
 
   const handleHomePress = () => {
-    navigation.navigate('login');
+    navigation.navigate('feed');
   };
   const handleProfilePress = () => {
-    navigation.navigate('dashboard');
+    navigation.navigate('profile');
   };
   const handleCreatePress = () => {
     console.log("Pressed join channel")

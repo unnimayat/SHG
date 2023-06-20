@@ -55,11 +55,16 @@ const MyScreen = () => {
       })
     }
   }, [uid])
+
+  useEffect(() => {
+    fetch();
+  }, []);
+
   useEffect(()=>{
     // if(isadmin)
     // {
       const fetch=async()=>{
-     await axios.get(`https://backendshg-0jzh.onrender.com/proposals/${uid}/not-voted`).then(response=>{
+      await axios.get(`https://backendshg-0jzh.onrender.com/proposals/${uid}/not-voted`).then(response=>{
         console.log('working');
         console.log(response.data.description);
         setMessages(response.data);
@@ -79,7 +84,7 @@ const MyScreen = () => {
     if (item === 'Attendance') {
       navigation.navigate('attendance');
     } else if (item === 'Home') {
-      navigation.navigate('login');
+      navigation.navigate('feed');
     } else if (item === 'Members') {
       navigation.navigate('members');
     }else if (item === 'SendInvitation') {
@@ -117,12 +122,15 @@ const MyScreen = () => {
     })
   };
 
-
+  const handleRefresh = () => {
+    // Call the fetchData function to fetch updated data
+    fetch();
+  };
 
   return (
     <View style={styles.container}>
       <View style={styles.headingContainer}>
-        <Text style={styles.heading}>Unit Data</Text>
+        <Text style={styles.heading} onPress={handleRefresh}>Unit Data</Text>
         <TouchableOpacity style={styles.menuIconContainer} onPress={handleMenuPress}>
           <MaterialIcons name="more-vert" size={20} color="white" />
         </TouchableOpacity>

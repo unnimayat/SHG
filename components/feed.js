@@ -98,12 +98,12 @@ export default function CreateJoin() {
       });
     navigation.navigate('unit');
   };
-
+  
   const handleHomePress = () => {
     navigation.navigate('feed');
   };
   const handleProfilePress = () => {
-    navigation.navigate('dashboard');
+    navigation.navigate('profile');
   };
   const handleCreatePress = () => {
     console.log("Pressed join channel")
