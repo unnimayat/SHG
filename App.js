@@ -12,6 +12,7 @@ import members from "./components/members"
 import feed from "./components/feed"
 import profile from './components/profile';
 import sendinvitation from "./components/sendinvitation"
+import announcements from "./components/announcements"
 const Stack = createNativeStackNavigator();
 import {i18next} from './assets/i18n/i18n'
 const MyStack = () => {
@@ -34,6 +35,7 @@ const MyStack = () => {
         <Stack.Screen name='sendinvitation' component={sendinvitation} options={{title:''}}/>
         <Stack.Screen name='feed' component={feed} options={{title:''}}/>
         <Stack.Screen name='profile' component={profile} options={{title:''}}/>
+        <Stack.Screen name='announcements' component={announcements} options={{title:''}}/>
       </Stack.Navigator>
     </NavigationContainer>
   );

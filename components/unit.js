@@ -97,7 +97,10 @@ const MyScreen = () => {
       navigation.navigate('members');
     }else if (item === 'SendInvitation') {
       navigation.navigate('sendinvitation');
+    }else if (item === 'Announcements') {
+      navigation.navigate('announcements');
     }
+
 
     // Close the menu
     setMenuVisible(false);
@@ -155,6 +158,9 @@ const MyScreen = () => {
         </TouchableOpacity>}
         <TouchableOpacity style={styles.menuItem} onPress={() => handleMenuItemPress('Attendance')}>
           <Text>Attendance</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.menuItem} onPress={() => handleMenuItemPress('Announcements')}>
+          <Text>Announcements</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.menuItem} onPress={() => handleMenuItemPress('Home')}>
           <Text>Home</Text>

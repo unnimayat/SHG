@@ -1,24 +1,26 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, StyleSheet ,TextInput} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import Icon from 'react-native-vector-icons/FontAwesome'; 
-//import 'react-datepicker/dist/react-datepicker.css';
+import Icon from 'react-native-vector-icons/FontAwesome';  
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import jwt_decode from "jwt-decode";
-import axios from 'axios';
-// import DatePicker from '@react-native-community/datetimepicker'; 
+import axios from 'axios';  
+import { Ionicons } from '@expo/vector-icons';
+
 import { useTranslation } from 'react-i18next';
 const Attendance = () => {
   const navigation = useNavigation();
-  const currentDate = new Date();
-  const [students, setStudents] = useState([]);
-  const [selectedDate, setSelectedDate] = useState(new Date());
-  const [show, setShow] = useState(false);
-  const options1 = { day: '2-digit', month: '2-digit', year: 'numeric' };
-  const [text, setText] = useState('');
-  const [uid, setUId] = useState('')
-
   
+  const currentDate = new Date();
+  const day = String(currentDate.getDate()).padStart(2, '0');
+  const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+  const year = currentDate.getFullYear();
+  const formattedDate = `${day}-${month}-${year}`;
+  const [students, setStudents] = useState([]);
+  const [selectedDate, setSelectedDate] = useState(formattedDate);
+  const [show, setShow] = useState(false); 
+  const [text, setText] = useState('');
+  const [uid, setUId] = useState('') 
   const options = [
     { label: 'english', value: 'en' },
     { label: 'malayalam', value: 'mal' }
@@ -86,19 +88,10 @@ const Attendance = () => {
     setShow(!show);
   };
 
-  const handleDateChange = (date) => {
-    setSelectedDate(date);
-    setShow(false);
-    const day = ("0" + date.getDate()).slice(-2);
-    const month = ("0" + (date.getMonth() + 1)).slice(-2);
-    const year = date.getFullYear();
-    const formattedDate = `${year}-${month}-${day}`;
-    setText(formattedDate);
-  };
-  // ...existing code...
+  const handleDateChange = () => { 
+  }; 
 
-  const handleSaveButtonPress = () => {
-    // Create a new array with the required format for posting
+  const handleSaveButtonPress = () => { 
     const postData = {
       id: uid,
       date: text,
@@ -128,22 +121,21 @@ const Attendance = () => {
   return (
     <ScrollView>
       <View style={styles.container}>
-        <View style={styles.today}>
-          <TouchableOpacity style={styles.todaybtn} onPress={handleButtonTodayPress}>
-            <Text style={styles.todayText}>{text}</Text>
-            <Icon name="calendar" size={16} color="#8B1874" />
-          </TouchableOpacity>
-          {show && (
-            // <DatePicker
-            //   selected={selectedDate}
-            //   onChange={handleDateChange}
-            //   dateFormat="dd/MM/yyyy"
-            //   style={styles.datepicker}
-            // />
-             
-            <View></View>
-            
-          )}
+        <View style={styles.today}>  
+            {/* <TouchableOpacity onPress={handleDateChange} style={styles.todaybtn}>
+              <TextInput 
+               style={styles.todayText}
+                value={selectedDate}
+                placeholder="dd-mm-yyyy"
+                editable={true}
+              />
+               <Icon name="calendar" size={16} color="#8B1874" />
+            </TouchableOpacity> */}
+            <TextInput style={styles.todayText} placeholder="dd-mm-yyyy" onPress={handleDateChange} value={selectedDate}/>
+              <TouchableOpacity style={styles.todaybtn}>
+                <Ionicons name="search" size={24} color="#8B1874" />
+            </TouchableOpacity>
+
         </View>
         {!show && (
           <View style={styles.center}>

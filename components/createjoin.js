@@ -146,13 +146,13 @@ axios.post('https://backendshg-0jzh.onrender.com/joinunit',{unitId:unit_id,userI
           style={[styles.topButton, createLabel ? styles.selectedButton : styles.nonselectedButton]}
           onPress={handleButtonCreatePress}
         >
-          <Text style={[styles.buttonText, createLabel ? styles.selectedButtonText : styles.nonselectedButtonText]}>{t(CREATE)}</Text>
+          <Text style={[styles.buttonText, createLabel ? styles.selectedButtonText : styles.nonselectedButtonText]}>{t("CREATE")}</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={[styles.topButton, joinLabel ? styles.selectedButton : styles.nonselectedButton]}
           onPress={handleButtonJoinPress}
         >
-          <Text style={[styles.buttonText, joinLabel ? styles.selectedButtonText : styles.nonselectedButtonText]}>{t(JOIN)}</Text>
+          <Text style={[styles.buttonText, joinLabel ? styles.selectedButtonText : styles.nonselectedButtonText]}>{t("JOIN")}</Text>
         </TouchableOpacity>
       </View>
 

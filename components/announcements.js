@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Dimensions, TextInput } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
-import Popover from 'react-native-popover-view';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import jwt_decode from 'jwt-decode';
 import { useNavigation } from '@react-navigation/native';
-import { useTranslation } from 'react-i18next';
 const { width } = Dimensions.get('window');
 
 const MyScreen = () => {
@@ -11,75 +12,98 @@ const MyScreen = () => {
   const [menuVisible, setMenuVisible] = useState(false);
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
+  const [id, setid] = useState('');
+  const [currentUserName, setCurrentUserName] = useState('');
 
-  const handleMenuPress = () => {
-    setMenuVisible(true);
-  };
-   
-  const options = [
-    { label: 'english', value: 'en' },
-    { label: 'malayalam', value: 'mal' }
-  ];
+  const retrieveToken = async () => {
+    try {
+      const token = await AsyncStorage.getItem('token');
 
-  const { t, i18n } = useTranslation();
-
-  const handleMenuItemPress = (item) => {
-    // Handle the press event for the selected menu item
-    if (item === 'Attendance') {
-      navigation.navigate('attendence');
-    } else if (item === 'Home') {
-      navigation.navigate('home');
-    } else if (item === 'Login') {
-      navigation.navigate('login');
+      if (token) {
+        console.log('Token retrieved successfully');
+        const decodedToken = jwt_decode(token);
+        const { name, id } = decodedToken;
+        console.log(name);
+        console.log(id);
+        return { name, id };
+      } else {
+        console.log('Token not found');
+        return null;
+      }
+    } catch (error) {
+      console.error('Failed to retrieve token', error);
+      return null;
     }
-
-    // Close the menu
-    setMenuVisible(false);
   };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const { name: currentUserName, id } = await retrieveToken();
+      console.log(id);
+      setid(id);
+      setCurrentUserName(currentUserName);
+    };
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    if (id !== '') {
+      axios
+        .get(`https://backendshg-0jzh.onrender.com/announcements/${id}`)
+        .then((response) => {
+          console.log(123);
+          setMessages(response.data);
+          console.log(response.data);
+        })
+        .catch((error) => {
+          console.error('Failed to retrieve messages...', error);
+        });
+    }
+  }, [id]);
 
   const handleAddMessage = () => {
     if (newMessage.trim() !== '') {
-      setMessages([...messages, { content: newMessage, agreed: false }]);
+      const message = {
+        message: newMessage,
+        senderName: currentUserName, // Set the sender as current user's name
+      };
+      setMessages([...messages, message]);
       setNewMessage('');
+      axios
+        .post('https://backendshg-0jzh.onrender.com/announcements', { id, message:message.message })
+        .then((response) => {
+          console.log('Response data:', response.data);
+          setMessages([...messages, message]);
+          setNewMessage('');
+          console.log(response);
+        })
+        .catch((error) => {
+          console.error('Failed to add message', error);
+        });
     }
   };
-
-  const handleAgree = (index) => {
-    const updatedMessages = [...messages];
-    updatedMessages[index].agreed = !updatedMessages[index].agreed;
-    setMessages(updatedMessages);
-  };
-  
-  const handleDisagree = (index) => {
-    const updatedMessages = [...messages];
-    updatedMessages[index].agreed = false;
-    setMessages(updatedMessages);
-  };
-  
-  
 
   return (
     <View style={styles.container}>
       <View style={styles.headingContainer}>
-        <Text style={styles.heading}>{t(Announcements)}</Text>
-       
+        <Text style={styles.heading}>Announcements</Text>
       </View>
-      
+
       <View style={styles.messageBox}>
-  {messages.map((message, index) => (
-    <View key={index} style={[styles.messageItem, styles.messageContainer]}>
-      <Text style={styles.messageContent}>{message.content}</Text>
-      <View style={styles.iconsContainer}>
-       
+        {messages.map((message, index) => (
+          <View key={index} style={[styles.messageItem, styles.messageContainer]}>
+            <Text style={styles.messageSender}>
+              {message.senderName === currentUserName ? 'You' : message.senderName}
+            </Text>
+            <Text style={styles.messageContent}>{message.message}</Text>
+          </View>
+        ))}
       </View>
-    </View>
-  ))}
-</View>
 
       <View style={styles.inputContainer}>
         <TextInput
           style={styles.input}
-          placeholder={t("Message")}
+          placeholder="type..."
           value={newMessage}
           onChangeText={setNewMessage}
         />
@@ -112,31 +136,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
   },
-  menuIconContainer: {
-    position: 'absolute',
-    right: 10,
-    top: '50%',
-    transform: [{ translateY: -12 }],
-  },
-  menuPopover: {
-    width: 150,
-    borderRadius: 4,
-    elevation: 4,
-  },
-  menuItem: {
-    paddingVertical: 10,
-    paddingHorizontal: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#CCCCCC',
-  },
-  overlayStyle: {
-    flex: 1,
-    width: width,
-    height: '100%',
-    justifyContent: 'flex-start',
-    alignItems: 'flex-end',
-    backgroundColor: 'transparent',
-  },
   messageBox: {
     position: 'absolute',
     width: 365,
@@ -145,7 +144,7 @@ const styles = StyleSheet.create({
     top: 58,
     borderRadius: 8,
     padding: 10,
-   backgroundColor:'white'
+    backgroundColor: 'white',
   },
   messageItem: {
     flexDirection: 'row',
@@ -155,7 +154,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     borderRadius: 8,
     marginBottom: 10,
-    bottom:0,
     shadowColor: '#8B1874',
     shadowOffset: {
       width: 0,
@@ -166,10 +164,13 @@ const styles = StyleSheet.create({
     elevation: 5,
     backgroundColor: '#FFFFFF',
   },
+  messageSender: {
+    fontWeight: 'bold',
+    marginRight: 10,
+  },
   messageContent: {
     color: 'black',
     marginRight: 10,
- 
   },
   messageContainer: {
     backgroundColor: '#F5F5F5',
@@ -183,21 +184,6 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
   },
-  
-  iconsContainer: {
-    flexDirection: 'row',
-  },
-  iconContainer: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#8B1874',
-    marginLeft: 8, // Adjust the value as needed
-  },
- 
-
   inputContainer: {
     position: 'absolute',
     flexDirection: 'row',
@@ -205,8 +191,7 @@ const styles = StyleSheet.create({
     width: 350,
     height: 40,
     left: 500,
-    
-    bottom:20,
+    bottom: 20,
     paddingHorizontal: 10,
   },
   input: {
