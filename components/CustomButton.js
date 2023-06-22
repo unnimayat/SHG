@@ -20,11 +20,10 @@ const styles = StyleSheet.create({
     height:50,
     width:200
   },
-  buttonText: { 
-    fontFamily: 'Inter',
+  buttonText: {  
     fontStyle: 'normal',
     fontSize: 28, 
-    fontWeight:550
+    fontWeight:500
   },
 });
 

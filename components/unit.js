@@ -61,24 +61,39 @@ const MyScreen = () => {
         setIsadmin(response.data.hasAdminAccess)
         console.log(isadmin)
       })
+      .catch(error => {
+        // Handle the error
+        if (error.response && error.response.status === 404) {
+          // Handle the 404 error
+          console.log('Not Found');
+        }
+        else {
+          // Handle other errors
+          console.log('Error:', error.message);
+        }
+      })
     }
   }, [uid])
 
-  useEffect(() => {
-    fetch();
-  }, []);
+  // useEffect(() => {
+  //   fetch();
+  // }, []);
 
   useEffect(()=>{
     // if(isadmin)
     // {
       const fetch=async()=>{
-      await axios.get(`https://backendshg-0jzh.onrender.com/proposals/${uid}/not-voted`).then(response=>{
+        if(uid!=='')
+      {await axios.get(`https://backendshg-0jzh.onrender.com/proposals/${uid}/not-voted`).then(response=>{
         console.log('working');
         console.log(response.data.description);
         setMessages(response.data);
         console.log(messages);
       }
-      )
+      ).catch(error => {
+        // Handle the error
+        console.error('Error:', error);
+      })}
   }
     fetch()
     // }
@@ -121,6 +136,10 @@ const MyScreen = () => {
     axios.post(`https://backendshg-0jzh.onrender.com/proposals/vote`,{id:mid,userId:uid,vote:1}).then(response=>{
       console.log(response);
     })
+    .catch(error => {
+      // Handle the error
+      console.error('Error:', error);
+    })
   };
 
   const handleDisagree = (index,mid) => {
@@ -130,6 +149,10 @@ const MyScreen = () => {
 
     axios.post(`https://backendshg-0jzh.onrender.com/proposals/vote`,{id:mid,userId:uid,vote:-1}).then(response=>{
       console.log(response);
+    })
+    .catch(error => {
+      // Handle the error
+      console.error('Error:', error);
     })
   };
 

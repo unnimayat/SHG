@@ -18,7 +18,7 @@ const Attendance = () => {
   const formattedDate = `${day}-${month}-${year}`;
   const [students, setStudents] = useState([]);
   const [selectedDate, setSelectedDate] = useState(formattedDate);
-  const [show, setShow] = useState(false); 
+  const [show, setShow] = useState(true); 
   const [text, setText] = useState('');
   const [uid, setUId] = useState('') 
   const options = [
@@ -76,7 +76,7 @@ const Attendance = () => {
           console.error(error);
         });
     }
-  }, [text, uid]);
+  }, [ uid]);
 
   const toggleAttendance = (index) => {
     const updatedStudents = [...students];
@@ -87,10 +87,9 @@ const Attendance = () => {
   const handleButtonTodayPress = () => {
     setShow(!show);
   };
-
-  const handleDateChange = () => { 
-  }; 
-
+  const handleDateChange = () => {
+    setShow(!show);
+  };
   const handleSaveButtonPress = () => { 
     const postData = {
       id: uid,
@@ -121,23 +120,32 @@ const Attendance = () => {
   return (
     <ScrollView>
       <View style={styles.container}>
-        <View style={styles.today}>  
-            {/* <TouchableOpacity onPress={handleDateChange} style={styles.todaybtn}>
-              <TextInput 
-               style={styles.todayText}
-                value={selectedDate}
-                placeholder="dd-mm-yyyy"
-                editable={true}
-              />
-               <Icon name="calendar" size={16} color="#8B1874" />
-            </TouchableOpacity> */}
+        {/* <View style={styles.today}>  
+            
             <TextInput style={styles.todayText} placeholder="dd-mm-yyyy" onPress={handleDateChange} value={selectedDate}/>
               <TouchableOpacity style={styles.todaybtn}>
                 <Ionicons name="search" size={24} color="#8B1874" />
             </TouchableOpacity>
 
-        </View>
-        {!show && (
+        </View> */}
+        <View style={styles.today}>
+    {!show && (
+      <TouchableOpacity onPress={handleDateChange} style={styles.todaybtn}>
+        <Text style={styles.todayText}>{selectedDate}</Text>
+        <Ionicons name="search" size={24} color="#8B1874" />
+      </TouchableOpacity>
+    )}
+    {show && (
+      <TextInput
+        style={styles.todayText}
+        placeholder="yyyy-mm-dd"
+        value={text}
+        onChangeText={setText}
+        onFocus={handleDateChange}
+        editable={show}
+      />
+    )}
+  </View> 
           <View style={styles.center}>
             <View style={styles.tableContainer}>
               <View style={styles.headerRow}>
@@ -175,7 +183,7 @@ const Attendance = () => {
               <Text style={styles.saveText}>SAVE</Text>
             </TouchableOpacity>
           </View>
-        )}
+        
       </View>
     </ScrollView>
   );

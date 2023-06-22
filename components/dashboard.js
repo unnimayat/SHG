@@ -71,8 +71,7 @@ const Dashboard = ({ route }) => {
     axios
       .post('https://backendshg-0jzh.onrender.com/makepayment', { userID: uid, id: uid, amt: amount })
       .then(response => {
-        console.log(response.data);
-        navigation.navigate('PaymentSummary', { paymentData: response.data });
+        console.log(response.data); 
       })
       .catch(error => {
         console.log('Error:', error);
