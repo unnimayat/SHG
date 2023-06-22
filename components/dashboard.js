@@ -5,7 +5,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import jwt_decode from 'jwt-decode';
 import axios from 'axios';
-import { MaterialIcons } from '@expo/vector-icons'; 
+import { MaterialIcons } from '@expo/vector-icons';
 
 const retrieveToken = async () => {
   try {
@@ -32,6 +32,7 @@ const Dashboard = ({ route }) => {
   const [uname, setUname] = useState('');
   const [amount, setAmount] = useState(0);
   const [uid, setUId] = useState('');
+  const [paymentlist, setpaymentlist] = useState([]);
   const [isadmin, setIsadmin] = useState(false);
   const navigation = useNavigation();
   const { name, id, unit } = route.params;
@@ -51,33 +52,6 @@ const Dashboard = ({ route }) => {
   };
 
   useEffect(() => {
-    const fetchData = async () => {
-      const { name, id } = await retrieveToken();
-      console.log(id);
-      setUId(id);
-      setUname(name);
-    };
-    fetchData();
-  }, []);
-  useEffect(() => {
-    if (route && route.params && route.params.member) {
-      const { name, id } = route.params.member;
-      setUId(id);
-      setUname(name);
-    }
-  }, [route]);
-
-  const handleAddMessage = () => {
-    axios
-      .post('https://backendshg-0jzh.onrender.com/makepayment', { userID: uid, id: uid, amt: amount })
-      .then(response => {
-        console.log(response.data); 
-      })
-      .catch(error => {
-        console.log('Error:', error);
-      });
-  };
-  useEffect(() => {
     if (uid !== '') {
       axios.get(`https://backendshg-0jzh.onrender.com/users/${uid}/hasadminAccess`).then(response => {
         setIsadmin(response.data.hasAdminAccess)
@@ -96,6 +70,50 @@ const Dashboard = ({ route }) => {
       })
     }
   }, [uid])
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const { name, id } = await retrieveToken();
+      console.log(id);
+      setUId(id);
+      setUname(name);
+    };
+    fetchData();
+  }, []);
+  useEffect(() => {
+    if (route && route.params && route.params.member) {
+      // const { name, id } = route.params.member;
+      // setUId(id);
+      setUname(name);
+    }
+  }, [route]);
+
+  const handleAddMessage = () => {
+    axios
+      .post('https://backendshg-0jzh.onrender.com/makepayment', { userID: uid, id: id, amt: amount })
+      .then(response => {
+        console.log(response.data);
+      })
+      .catch(error => {
+        console.log('Error:', error);
+      });
+  };
+
+  useEffect(() => {
+    if (uid !== '') {
+      axios.post('https://backendshg-0jzh.onrender.com/listpayment', { userID: uid, id: id })
+        .then(response => {
+          console.log(response.data)
+          const data = Array.isArray(response.data) ? response.data : [response.data];
+          setpaymentlist(data);
+          console.log(paymentlist)
+        })
+        .catch(error => {
+          console.log('Error: ', error)
+        });
+    }
+  }, [uid])
+
   const currentDate = new Date().toLocaleDateString();
 
   // Sample data for the table
@@ -135,7 +153,7 @@ const Dashboard = ({ route }) => {
               <Text style={styles.headerCell}>Date</Text>
               <Text style={styles.headerCell}>Amount Paid</Text>
             </View>
-            {tableData.map((data, index) => (
+            {paymentlist?.map((data, index) => (
               <View style={styles.tableRow} key={index}>
                 <Text style={styles.tableCell}>{data.date}</Text>
                 <Text style={styles.tableCell}>{data.amount}</Text>
@@ -144,21 +162,19 @@ const Dashboard = ({ route }) => {
           </View>
 
           {/* Message Box */}
-          {isadmin && 
-          <View style={styles.messageBox}>
-          <Text style={styles.date}>{currentDate}</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Enter the amount paid"
-            value={amount === 0 ? '' : amount.toString()}
-            onChangeText={setAmount}
-            keyboardType="numeric"
-          />
-          <TouchableOpacity style={styles.sendButton} onPress={handleAddMessage}>
-            <MaterialIcons name="send" size={20} color="white" />
-          </TouchableOpacity>
-        </View>}
-          
+          {isadmin && <View style={styles.messageBox}>
+            <Text style={styles.date}>{currentDate}</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Enter the amount paid"
+              value={amount === 0 ? '' : amount.toString()}
+              onChangeText={setAmount}
+              keyboardType="numeric"
+            />
+            <TouchableOpacity style={styles.sendButton} onPress={handleAddMessage}>
+              <MaterialIcons name="send" size={20} color="white" />
+            </TouchableOpacity>
+          </View>}
         </View>
       </View>
 
@@ -248,7 +264,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#8B1874',
     textAlign: 'center',
-    width:150,
+    width: 150,
   },
   tableRow: {
     flexDirection: 'row',
@@ -292,7 +308,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
   },
 
-   messageBox: {
+  messageBox: {
     position: 'absolute',
     width: 320,
     height: 80,
@@ -301,7 +317,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     bottom: '50%',
     left: '50%',
-    transform: [ {translateX:-160.5} ,{translateY:240}],
+    transform: [{ translateX: -160.5 }, { translateY: 240 }],
     zIndex: 1,
     flexDirection: 'row',
     justifyContent: 'space-between',
