@@ -114,6 +114,8 @@ const MyScreen = () => {
       navigation.navigate('sendinvitation');
     }else if (item === 'Announcements') {
       navigation.navigate('announcements');
+    }else if (item === 'Pending') {
+      navigation.navigate('pending');
     }
 
 
@@ -190,6 +192,9 @@ const MyScreen = () => {
         </TouchableOpacity>
         <TouchableOpacity style={styles.menuItem} onPress={() => handleMenuItemPress('Members')}>
           <Text>Members</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.menuItem} onPress={() => handleMenuItemPress('Pending')}>
+          <Text>Pending</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.menuItem} onPress={() => handleMenuItemPress('Home')}>
           <Text>Log out</Text>

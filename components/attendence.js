@@ -18,6 +18,7 @@ const Attendance = () => {
   const formattedDate = `${day}-${month}-${year}`;
   const [students, setStudents] = useState([]);
   const [selectedDate, setSelectedDate] = useState(formattedDate);
+  const [initial,setInitial]=useState(true);
   const [show, setShow] = useState(true); 
   const [text, setText] = useState('');
   const [uid, setUId] = useState('') 
@@ -76,7 +77,7 @@ const Attendance = () => {
           console.error(error);
         });
     }
-  }, [ uid]);
+  }, [ text,uid]);
 
   const toggleAttendance = (index) => {
     const updatedStudents = [...students];
@@ -84,6 +85,9 @@ const Attendance = () => {
     setStudents(updatedStudents);
   };
 
+  const handleInitialChange=()=>{
+    setInitial(false);
+  }
   const handleButtonTodayPress = () => {
     setShow(!show);
   };
@@ -129,13 +133,13 @@ const Attendance = () => {
 
         </View> */}
         <View style={styles.today}>
-    {!show && (
-      <TouchableOpacity onPress={handleDateChange} style={styles.todaybtn}>
-        <Text style={styles.todayText}>{selectedDate}</Text>
-        <Ionicons name="search" size={24} color="#8B1874" />
-      </TouchableOpacity>
-    )}
-    {show && (
+  {initial ? (
+    <TouchableOpacity onPress={handleInitialChange} style={styles.todaybtn}>
+      <Text style={styles.todayText}>{selectedDate}</Text>
+      <Ionicons name="search" size={24} color="#8B1874" />
+    </TouchableOpacity>
+  ) : (
+    <View style={styles.todaybtn}>
       <TextInput
         style={styles.todayText}
         placeholder="yyyy-mm-dd"
@@ -144,8 +148,11 @@ const Attendance = () => {
         onFocus={handleDateChange}
         editable={show}
       />
-    )}
-  </View> 
+      <Ionicons name="search" size={24} color="#8B1874" onPress={handleDateChange}/>
+    </View>
+  )}
+</View>
+
           <View style={styles.center}>
             <View style={styles.tableContainer}>
               <View style={styles.headerRow}>

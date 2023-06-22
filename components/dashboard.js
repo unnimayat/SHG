@@ -77,7 +77,25 @@ const Dashboard = ({ route }) => {
         console.log('Error:', error);
       });
   };
-
+  useEffect(() => {
+    if (uid !== '') {
+      axios.get(`https://backendshg-0jzh.onrender.com/users/${uid}/hasadminAccess`).then(response => {
+        setIsadmin(response.data.hasAdminAccess)
+        console.log(isadmin)
+      })
+      .catch(error => {
+        // Handle the error
+        if (error.response && error.response.status === 404) {
+          // Handle the 404 error
+          console.log('Not Found');
+        }
+        else {
+          // Handle other errors
+          console.log('Error:', error.message);
+        }
+      })
+    }
+  }, [uid])
   const currentDate = new Date().toLocaleDateString();
 
   // Sample data for the table
@@ -126,19 +144,21 @@ const Dashboard = ({ route }) => {
           </View>
 
           {/* Message Box */}
+          {isadmin && 
           <View style={styles.messageBox}>
-            <Text style={styles.date}>{currentDate}</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Enter the amount paid"
-              value={amount === 0 ? '' : amount.toString()}
-              onChangeText={setAmount}
-              keyboardType="numeric"
-            />
-            <TouchableOpacity style={styles.sendButton} onPress={handleAddMessage}>
-              <MaterialIcons name="send" size={20} color="white" />
-            </TouchableOpacity>
-          </View>
+          <Text style={styles.date}>{currentDate}</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Enter the amount paid"
+            value={amount === 0 ? '' : amount.toString()}
+            onChangeText={setAmount}
+            keyboardType="numeric"
+          />
+          <TouchableOpacity style={styles.sendButton} onPress={handleAddMessage}>
+            <MaterialIcons name="send" size={20} color="white" />
+          </TouchableOpacity>
+        </View>}
+          
         </View>
       </View>
 
