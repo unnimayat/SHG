@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Dimensions, TextInput } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import Popover from 'react-native-popover-view';
-import { useNavigation ,useFocusEffect} from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import jwt_decode from "jwt-decode";
 import axios from 'axios';
@@ -16,8 +16,8 @@ const MyScreen = () => {
   const [newMessage, setNewMessage] = useState('');
   const [uid, setUId] = useState('')
   const [isadmin, setIsadmin] = useState(false);
-  
-  
+
+
   const options = [
     { label: 'english', value: 'en' },
     { label: 'malayalam', value: 'mal' }
@@ -62,43 +62,44 @@ const MyScreen = () => {
         setIsadmin(response.data.hasAdminAccess)
         console.log(isadmin)
       })
-      .catch(error => {
-        // Handle the error
-        if (error.response && error.response.status === 404) {
-          // Handle the 404 error
-          console.log('Not Found');
-        }
-        else {
-          // Handle other errors
-          console.log('Error:', error.message);
-        }
-      })
+        .catch(error => {
+          // Handle the error
+          if (error.response && error.response.status === 404) {
+            // Handle the 404 error
+            console.log('Not Found');
+          }
+          else {
+            // Handle other errors
+            console.log('Error:', error.message);
+          }
+        })
     }
   }, [uid])
-     
-    
+
+
 
   // useEffect(() => {
   //   fetch();
   // }, []);
 
-  useEffect(()=>{ 
-      const fetch=async()=>{
-        if(uid!=='')
-      {await axios.get(`https://backendshg-0jzh.onrender.com/proposals/${uid}/not-voted`).then(response=>{
-        console.log('working');
-        console.log(response.data.description);
-        setMessages(response.data);
-        console.log(messages);
+  useEffect(() => {
+    const fetch = async () => {
+      if (uid !== '') {
+        await axios.get(`https://backendshg-0jzh.onrender.com/proposals/${uid}/not-voted`).then(response => {
+          console.log('working');
+          console.log(response.data.description);
+          setMessages(response.data);
+          console.log(messages);
+        }
+        ).catch(error => {
+          // Handle the error
+          console.error('Error:', error);
+        })
       }
-      ).catch(error => {
-        // Handle the error
-        console.error('Error:', error);
-      })}
-  }
+    }
     fetch()
     // }
-  },[uid])
+  }, [uid])
   const handleMenuPress = () => {
     setMenuVisible(true);
   };
@@ -111,13 +112,13 @@ const MyScreen = () => {
       navigation.navigate('feed');
     } else if (item === 'Members') {
       navigation.navigate('members');
-    }else if (item === 'SendInvitation') {
+    } else if (item === 'SendInvitation') {
       navigation.navigate('sendinvitation');
-    }else if (item === 'Announcements') {
+    } else if (item === 'Announcements') {
       navigation.navigate('announcements');
-    }else if (item === 'Pending') {
+    } else if (item === 'Pending') {
       navigation.navigate('pending');
-    }else if (item === 'Minutes') {
+    } else if (item === 'Minutes') {
       navigation.navigate('minutes');
     }
 
@@ -133,32 +134,32 @@ const MyScreen = () => {
     }
   };
 
-  const handleAgree = (index,mid) => {
+  const handleAgree = (index, mid) => {
     const updatedMessages = [...messages];
     updatedMessages[index].agreed = !updatedMessages[index].agreed;
     setMessages(updatedMessages);
 
-    axios.post(`https://backendshg-0jzh.onrender.com/proposals/vote`,{id:mid,userId:uid,vote:1}).then(response=>{
+    axios.post(`https://backendshg-0jzh.onrender.com/proposals/vote`, { id: mid, userId: uid, vote: 1 }).then(response => {
       console.log(response);
     })
-    .catch(error => {
-      // Handle the error
-      console.error('Error:', error);
-    })
+      .catch(error => {
+        // Handle the error
+        console.error('Error:', error);
+      })
   };
 
-  const handleDisagree = (index,mid) => {
+  const handleDisagree = (index, mid) => {
     const updatedMessages = [...messages];
     updatedMessages[index].agreed = false;
     setMessages(updatedMessages);
 
-    axios.post(`https://backendshg-0jzh.onrender.com/proposals/vote`,{id:mid,userId:uid,vote:-1}).then(response=>{
+    axios.post(`https://backendshg-0jzh.onrender.com/proposals/vote`, { id: mid, userId: uid, vote: -1 }).then(response => {
       console.log(response);
     })
-    .catch(error => {
-      // Handle the error
-      console.error('Error:', error);
-    })
+      .catch(error => {
+        // Handle the error
+        console.error('Error:', error);
+      })
   };
 
   const handleRefresh = () => {
@@ -210,17 +211,17 @@ const MyScreen = () => {
         <Text style={styles.vote} onPress={handleRefresh}>{t("Vote")}</Text>
         {messages.map((message, index) => (
           <View key={index} style={[styles.messageItem, styles.messageContainer]}>
-            <Text style={styles.messageContent}>{message.description}</Text>
+            <Text style={styles.messageContent}>{t("paymentText", { name: message.description.name, amount: message.description.amount })}</Text>
             <View style={styles.iconsContainer}>
               <TouchableOpacity
                 style={[styles.iconContainer, message.agreed && styles.agreedIcon]}
-                onPress={() => handleAgree(index,message._id)}
+                onPress={() => handleAgree(index, message._id)}
               >
                 <MaterialIcons name="thumb-up" size={18} color="white" />
               </TouchableOpacity>
               <TouchableOpacity
                 style={[styles.iconContainer, !message.agreed && styles.disagreedIcon]}
-                onPress={() => handleDisagree(index,message._id)}
+                onPress={() => handleDisagree(index, message._id)}
               >
                 <MaterialIcons name="thumb-down" size={18} color="white" />
               </TouchableOpacity>
@@ -248,8 +249,8 @@ const MyScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center', 
-    right:10
+    alignItems: 'center',
+    right: 10
   },
   headingContainer: {
     position: 'absolute',
@@ -266,11 +267,11 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
   },
-  vote:{
+  vote: {
     color: '#A06D95',
     fontSize: 18,
     fontWeight: 'bold',
-    marginLeft:10
+    marginLeft: 10
   },
   menuIconContainer: {
     position: 'absolute',
