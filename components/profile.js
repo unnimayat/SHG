@@ -36,7 +36,8 @@ const Profile = () => {
   const [isadmin, setIsadmin] = useState(false);
   const [paymentId,setpaymentId]=useState('');
   const [description,setDescription]=useState('');
-
+  const [paymentlist, setpaymentlist] = useState([]);
+  const [invitestatus, setInvitestatus] = useState(null)
   const navigation = useNavigation();
 
 //   const { name, id, unit } = route.params;
@@ -51,6 +52,22 @@ const Profile = () => {
   const handleEditPress = () => {
     navigation.navigate('editprofile');
   };
+
+  
+  useEffect(() => {
+    if (uid != '') {
+      axios.get(`https://backendshg-0jzh.onrender.com/users/${uid}/invited`)
+        .then(response => {
+          const { is_invited } = response.data;
+          console.log(is_invited)
+          setInvitestatus(is_invited)
+        })
+        .catch(error => {
+          console.error(error);
+        });
+    }
+  }, [uid]);
+  
   const handleCreatePress = () => {
     console.log("Pressed join channel")
     console.log(invitestatus)
@@ -59,6 +76,21 @@ const Profile = () => {
     }
     else { navigation.navigate('createjoin'); }
   };
+
+  useEffect(() => {
+    if (uid !== '') {
+      axios.post('https://backendshg-0jzh.onrender.com/listpayment', { userID: uid, id: uid })
+        .then(response => {
+          console.log(response.data)
+          const data = Array.isArray(response.data) ? response.data : [response.data];
+          setpaymentlist(data);
+          console.log(paymentlist)
+        })
+        .catch(error => {
+          console.log('Error: ', error)
+        });
+    }
+  }, [uid])
 
   useEffect(() => {
     const fetchData = async () => {
@@ -111,7 +143,7 @@ const Profile = () => {
       <View style={styles.upperDiv}>
         <View style={styles.upperLeft}>
           <View style={styles.profileCircle}>
-            <Ionicons name="person-circle-outline" size={120} color="#A06D95" />
+            <Ionicons name="person-circle-outline" size={115} color="#A06D95" style={styles.proicon}/>
           </View>
           <TouchableOpacity style={styles.editButton} onPress={handleEditPress}>
             <Ionicons name="pencil-outline" size={20} color="#FFFFFF" />
@@ -119,11 +151,10 @@ const Profile = () => {
         </View>
       </View>
       
-      {/* <View style={styles.info}>
-      <Text style={styles.name}>Name: {name}</Text>
-      <Text style={styles.id}>ID: {id}</Text>
-      <Text style={styles.id}>Unit: {unit}</Text>
-    </View> */}
+      <View style={styles.info}>
+        <Text style={styles.name}>Name: {uname}</Text>
+        <Text style={styles.id}>ID: {uid}</Text> 
+      </View>
 
       {/* Lower div */}
       <View style={styles.lowerDiv}>
@@ -140,7 +171,18 @@ const Profile = () => {
             ))}
           </View> */}
            
-          
+          <View style={styles.tableContainer}>
+            <View style={styles.tableHeader}>
+              <Text style={styles.headerCell}>Date</Text>
+              <Text style={styles.headerCell}>Amount Paid</Text>
+            </View>
+            {paymentlist?.map((data, index) => (
+              <View style={styles.tableRow} key={index}>
+                <Text style={styles.tableCell}>{data.date}</Text>
+                <Text style={styles.tableCell}>{data.amount}</Text>
+              </View>
+            ))}
+          </View>
         </View>
       </View>
 
@@ -179,6 +221,12 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 15,
     overflow: 'hidden',
   },
+  proicon:{
+    justifyContent:'center',
+    alignItems:'center',
+    top:-7,
+    right:5
+  },
   navbarButton: {
     flex: 1,
     alignItems: 'center',
@@ -208,6 +256,8 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     alignItems: 'center',
     justifyContent: 'center',
+    left:100,
+    top:-10,
   },
   editButton: {
     position: 'absolute',
@@ -217,18 +267,18 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     padding: 5,
   },
-  lowerDiv: {
-    backgroundColor: '#FFFFFF',
+  lowerDiv: { 
     flex: 1,
     width: '100%',
     position: 'absolute',
     justifyContent: 'center',
     alignItems: 'center',
+    bottom:300
   },
   contents: {
     flexDirection: 'column',
-    right: 100,
-    top: 75,
+    right: 0,
+    top: 0, 
   },
   messageBox: {
     position: 'absolute',
@@ -296,6 +346,69 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     borderWidth: 2,
     borderColor: '#8B1874',
+  }, 
+  headerCell: {
+    flex: 1,
+    fontSize: 14,
+    color: '#8B1874',
+    textAlign: 'center',
+    width: 150,
+  },
+  tableRow: {
+    flexDirection: 'row',
+    marginBottom: 8,
+    borderRadius: 4,
+    padding: 0,
+    backgroundColor: '#F8F8F8',
+  },
+  tableCell: {
+    flex: 1,
+    fontSize: 12,
+    color: '#333333',
+    textAlign: 'center',
+  },
+  messageBox: {
+    position: 'absolute',
+    width: 320,
+    height: 80,
+    borderRadius: 8,
+    padding: 10,
+    backgroundColor: 'white',
+    bottom: '50%',
+    left: '50%',
+    transform: [{ translateX: -160.5 }, { translateY: 240 }],
+    zIndex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    borderRadius: 8,
+    marginBottom: 10,
+    shadowColor: '#8B1874',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+    backgroundColor: '#FFFFFF',
+  },
+  date: {
+    position: 'absolute',
+    top: 2,
+    right: 2,
+    color: '#777777',
+    fontSize: 12,
+  },
+  input: {
+    flex: 1,
+    borderRadius: 8,
+    backgroundColor: 'white',
+    paddingHorizontal: 10,
+    borderWidth: 2,
+    borderColor: '#8B1874',
   },
   sendButton: {
     width: 30,
@@ -306,53 +419,32 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginLeft: 15,
   },
-  
   info: {
+    backgroundColor:'black',
     position: 'absolute',
     left: 2,
-    top: 300,
+    top: -150,
     width: '100%',
   },
   name: {
-    fontSize: 16,
-    // fontWeight: 'bold',
-    color: '#A06D95',
-    marginBottom: 10,
-  },
-  id: {
-    fontSize: 16,
-    color: '#777777',
-  },
-  tableContainer: {
-    marginTop: 20,
-    backgroundColor: '#FFFFFF',
-    borderWidth: 1,
-    borderColor: '#A06D95',
-    borderRadius: 8,
-    padding: 10,
-    marginBottom: 20,
-    width:200,
-    height:200,
-  },
-  tableHeaderText: {
-    fontWeight: 'bold',
-    fontSize: 16,
+    fontSize: 20,
+    color: 'white',
     marginBottom: 5,
   },
-  tableRow: {
+  id: {
+    fontSize: 20,
+    color: 'white',
+  }, 
+  tableContainer: { 
+    width: '100%', 
+  },
+  tableHeader: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 10,
-  },
-  rowDate: {
-    flex: 1,
-    fontSize: 14,
-  },
-  rowAmount: {
-    flex: 1,
-    fontSize: 14,
-    textAlign: 'right',
+    marginBottom: 5,
+    backgroundColor: '#F8F8F8',
+    borderRadius: 4,
+    padding: 10,
+    width:'100%',
   },
 });
 export default Profile;

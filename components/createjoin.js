@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, TextInput, View, TouchableOpacity, Text } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-//import Ionicons from 'react-native-vector-icons/Ionicons';
-import { Ionicons } from '@expo/vector-icons';
+//import Ionicons from 'react-native-vector-icons/Ionicons'; 
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useTranslation } from 'react-i18next';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -159,7 +159,7 @@ axios.post('https://backendshg-0jzh.onrender.com/joinunit',{unitId:unit_id,userI
       {/* label */}
       {createLabel ? (
         <View style={styles.label}>
-          <Text style={styles.loginText1}>{t(CREATE)}</Text>
+          <Text style={styles.loginText1}>{t('CREATE')}</Text>
           <TextInput
             style={styles.inputname}
             placeholder={t("Enter Unit Name")}
@@ -175,7 +175,7 @@ axios.post('https://backendshg-0jzh.onrender.com/joinunit',{unitId:unit_id,userI
             onChangeText={handleIdChange}
           />
           <TouchableOpacity style={styles.loginbtn} onPress={handleButtonPress}>
-            <Text style={styles.loginText}>{t(CREATE)}</Text>
+            <Text style={styles.loginText}>{t('CREATE')}</Text>
           </TouchableOpacity>
         </View>
       ) : (<view>{ invitation?(
@@ -204,7 +204,7 @@ axios.post('https://backendshg-0jzh.onrender.com/joinunit',{unitId:unit_id,userI
           <Ionicons name="create-outline" size={24} color="#FFFFFF" />
         </TouchableOpacity>
         <TouchableOpacity style={styles.navbarButton} onPress={handleProfilePress}>
-          <Ionicons name="person-outline" size={24} color="#FFFFFF" />
+          <Ionicons name="person-outline" size={20} color="#FFFFFF" />
         </TouchableOpacity>
       </View>
     </View>
@@ -315,9 +315,6 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    width: 60,
-    height: 22,
-    top: 10,
     padding: 10,
   },
   icon: { 

@@ -131,7 +131,7 @@ const Dashboard = ({ route }) => {
       <View style={styles.upperDiv}>
         <View style={styles.upperLeft}>
           <View style={styles.profileCircle}>
-            <Ionicons name="person-circle-outline" size={120} color="#A06D95" />
+            <Ionicons name="person-circle-outline" size={120} color="#A06D95" style={styles.proicon}/>
           </View>
           <View style={styles.info}>
             <Text style={styles.name}>{name}</Text>
@@ -233,19 +233,27 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     top: 120,
   },
+  proicon:{
+    justifyContent:'center',
+    alignItems:'center',
+    top:-7,
+    right:5
+  },
   profileContainer: {
     alignItems: 'center',
     marginTop: 20,
-  },
+  }, 
   profileCircle: {
     width: 110,
     height: 110,
-    borderRadius: 55,
+    borderRadius: 75,
     backgroundColor: '#FFFFFF',
     borderColor: '#868686',
     borderWidth: 2,
     alignItems: 'center',
     justifyContent: 'center',
+    left:100,
+    top:-10,
   },
   tableContainer: {
     marginTop: 150,

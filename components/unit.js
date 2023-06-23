@@ -242,14 +242,14 @@ const MyScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    backgroundColor: '#F5F5F5',
+    alignItems: 'center', 
+    right:10
   },
   headingContainer: {
     position: 'absolute',
     width: 365,
     height: 40,
-    left: 500,
+    left: 0,
     top: 0,
     backgroundColor: '#A06D95',
     justifyContent: 'center',
@@ -294,7 +294,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     width: 365,
     height: 600,
-    left: 500,
+    left: 0,
     top: 58,
     borderRadius: 8,
     padding: 10,

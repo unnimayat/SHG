@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, TextInput, View, TouchableOpacity, Text } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-//import Ionicons from 'react-native-vector-icons/Ionicons';
-import { Ionicons } from '@expo/vector-icons';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useTranslation } from 'react-i18next';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import jwt_decode from "jwt-decode";
+import jwt_decode from 'jwt-decode';
 import axios from 'axios';
 
 export default function CreateJoin() {
@@ -125,7 +124,7 @@ export default function CreateJoin() {
     <View style={styles.container}>
        <Text style={styles.loginText1}>{t("No posts yet")}</Text>
 
-      {/* navbar */}
+        {/* Navbar */}
       <View style={styles.navbar}>
         <TouchableOpacity style={styles.navbarButton} onPress={handleHomePress}>
           <Ionicons name="home-outline" size={24} color="#FFFFFF" />
@@ -134,7 +133,7 @@ export default function CreateJoin() {
           <Ionicons name="create-outline" size={24} color="#FFFFFF" />
         </TouchableOpacity>
         <TouchableOpacity style={styles.navbarButton} onPress={handleProfilePress}>
-          <Ionicons name="person-outline" size={24} color="#FFFFFF" />
+          <Ionicons name="person-outline" size={20} color="#FFFFFF" />
         </TouchableOpacity>
       </View>
     </View>
@@ -228,7 +227,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#8B1874',
     marginBottom: 20,
-  },
+  }, 
   navbar: {
     flexDirection: 'row',
     justifyContent: 'space-around',
@@ -245,9 +244,6 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    width: 60,
-    height: 22,
-    top: 10,
     padding: 10,
   },
   icon: { 
