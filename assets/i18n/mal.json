@@ -17,6 +17,7 @@
         "Enter the amount paid":"അടച്ച തുക നൽകുക",
         "No posts yet":"ഇതുവരെ പോസ്റ്റുകളില്ല",
         "Unit Data":"യൂണിറ്റ് ഡാറ്റ",
-        "Vote":"വോട്ട് ചെയ്യുക"
+        "Vote":"വോട്ട് ചെയ്യുക",
+        "paymentText": "{{name}} {{amount}} രൂപ പണമടച്ചു"
     }
 }

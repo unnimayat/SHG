@@ -150,7 +150,7 @@ const MyScreen = () => {
 
       {messages.map((message, index) => (
         <View key={index} style={[styles.messageItem, styles.messageContainer]}>
-          <Text style={styles.messageContent}>{message.description}</Text>
+          <Text style={styles.messageContent}>{t("paymentText", { name: message.description.name, amount: message.description.amount })}</Text>
           <View style={styles.iconsContainer}>
             <TouchableOpacity
               style={[styles.iconContainer]}
