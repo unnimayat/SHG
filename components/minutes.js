@@ -1,22 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Dimensions, TextInput } from 'react-native';
-import { MaterialIcons } from '@expo/vector-icons';
-import Popover from 'react-native-popover-view';
-import { useNavigation } from '@react-navigation/native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import jwt_decode from "jwt-decode";
-import axios from 'axios';
-import { useTranslation } from 'react-i18next';
+import { View, Text, StyleSheet, Dimensions, TextInput, TouchableOpacity } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage
+import axios from 'axios'; // Import axios for making HTTP requests
+import jwt_decode from 'jwt-decode'; // Import jwt-decode for decoding JWT tokens
+
 const { width } = Dimensions.get('window');
 
 const MyScreen = () => {
-  const navigation = useNavigation();
-  const [menuVisible, setMenuVisible] = useState(false);
-  const [messages, setMessages] = useState([]);
-  const [newMessage, setNewMessage] = useState('');
-  const [uid, setUId] = useState('')
+  const [minutes, setMinutes] = useState([]);
+  const [newMinutes, setNewMinutes] = useState('');
+  const today = new Date().toLocaleDateString(); // Get today's date
+  const [id, setId] = useState('');
+  const [currentUserName, setCurrentUserName] = useState('');
+  
   const [isadmin, setIsadmin] = useState(false);
-
 
   const retrieveToken = async () => {
     try {
@@ -26,8 +23,8 @@ const MyScreen = () => {
         console.log('Token retrieved successfully');
         const decodedToken = jwt_decode(token);
         const { name, id } = decodedToken;
-        console.log(name)
-        console.log(id)
+        console.log(name);
+        console.log(id);
         return { name, id };
       } else {
         console.log('Token not found');
@@ -40,103 +37,125 @@ const MyScreen = () => {
   };
 
   useEffect(() => {
-    const fetchData = async () => {
-      const { name, id } = await retrieveToken();
-      console.log(id);
-      setUId(id);
-    };
-    fetchData();
-  }, [])
-  useEffect(() => {
-    if (uid !== '') {
+    if (id !== '') {
       axios.get(`https://backendshg-0jzh.onrender.com/users/${uid}/hasadminAccess`).then(response => {
         setIsadmin(response.data.hasAdminAccess)
         console.log(isadmin)
       })
+      .catch(error => {
+        // Handle the error
+        if (error.response && error.response.status === 404) {
+          // Handle the 404 error
+          console.log('Not Found');
+        }
+        else {
+          // Handle other errors
+          console.log('Error:', error.message);
+        }
+      })
     }
-  }, [uid])
-  const handleMenuPress = () => {
-    setMenuVisible(true);
-  };
+  }, [id])
 
-  const handleMenuItemPress = (item) => {
-    // Handle the press event for the selected menu item
-    if (item === 'Attendance') {
-      navigation.navigate('attendance');
-    } else if (item === 'Home') {
-      navigation.navigate('login');
-    } else if (item === 'Members') {
-      navigation.navigate('members');
+  useEffect(() => {
+    const fetchData = async () => {
+      const { name: currentUserName, id } = await retrieveToken();
+      console.log(id);
+      setId(id);
+      setCurrentUserName(currentUserName);
+    };
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    if (id !== '') {
+      axios
+        .get(`https://backendshg-0jzh.onrender.com/minutes/${id}`)
+        .then((response) => {
+          console.log(123);
+          setMinutes(response.data);
+          console.log(response.data);
+        })
+        .catch((error) => {
+          console.error('Failed to retrieve minutes...', error);
+        });
     }
+  }, [id]);
 
-    // Close the menu
-    setMenuVisible(false);
-  };
+  // useEffect(()=>{
+  //   handleAddMinutes();
+  // },[id]);
 
-  const handleAddMessage = () => {
-    if (newMessage.trim() !== '') {
-      setMessages([...messages, { content: newMessage, agreed: false }]);
-      setNewMessage('');
+  const handleAddMinutes = () => {
+    if (newMinutes.trim() !== '') {
+      // const formattedMinutes = newMinutes.split('\n');
+      const newMessage = {
+        message: newMinutes,
+        date: new Date().toISOString().split('T')[0],
+      };
+      
+
+      setMinutes([...minutes, newMessage]);
+
+      setNewMinutes('');
+      
+      
+      console.log('hii')
+      if(id!==''){
+        axios
+        .post('https://backendshg-0jzh.onrender.com/minutes', { id, message:newMessage.message})
+        .then((response) => {
+          console.log('hello')
+          console.log('Response data:..', response.data);
+          setMinutes([...minutes, newMessage]); // Update the state with newMessage instead of message
+          setNewMinutes('');
+          console.log(response);
+        })
+        .catch((error) => {
+          console.error('Failed to add message', error);
+        });
+      }
+      
     }
   };
-
-  const handleAgree = (index) => {
-    const updatedMessages = [...messages];
-    updatedMessages[index].agreed = !updatedMessages[index].agreed;
-    setMessages(updatedMessages);
-  };
-
-  const handleDisagree = (index) => {
-    const updatedMessages = [...messages];
-    updatedMessages[index].agreed = false;
-    setMessages(updatedMessages);
-  };
-
-
 
   return (
     <View style={styles.container}>
       <View style={styles.headingContainer}>
         <Text style={styles.heading}>Minutes</Text>
-        <TouchableOpacity style={styles.menuIconContainer} onPress={handleMenuPress}>
-          <MaterialIcons name="more-vert" size={24} color="white" />
-        </TouchableOpacity>
       </View>
-    
-      <View style={styles.messageBox}>
-        {messages.map((message, index) => (
-          <View key={index} style={[styles.messageItem, styles.messageContainer]}>
-            <Text style={styles.messageContent}>{message.content}</Text>
-            <View style={styles.iconsContainer}>
-              <TouchableOpacity
-                style={[styles.iconContainer, message.agreed && styles.agreedIcon]}
-                onPress={() => handleAgree(index)}
-              >
-                <MaterialIcons name="thumb-up" size={18} color="white" />
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[styles.iconContainer, !message.agreed && styles.disagreedIcon]}
-                onPress={() => handleDisagree(index)}
-              >
-                <MaterialIcons name="thumb-down" size={18} color="white" />
-              </TouchableOpacity>
-            </View>
-          </View>
-        ))}
+      <View style={styles.dateContainer}></View>
+      <View style={styles.minutesContainer}>
+        {/* {minutes.map((minute, index) => (
+          <TouchableOpacity key={index} style={styles.minuteCard}>
+            {minute.message.map((point, pointIndex) => (
+              <Text key={pointIndex} style={styles.minutePoint}>
+                {point}
+              </Text>
+            ))}
+          </TouchableOpacity>
+        ))} */}
+        {minutes.map((minute, index) => (
+  <TouchableOpacity key={index} style={styles.minuteCard}>
+    <Text style={styles.minutePoint}>{minute.message}</Text>
+  </TouchableOpacity>
+))}
+
       </View>
-      {isadmin &&
+      { isadmin &&
       <View style={styles.inputContainer}>
+      <Text style={styles.dateText}>{today}</Text>
+      <Text style={styles.inputLabel}></Text>
       <TextInput
         style={styles.input}
-        placeholder="type..."
-        value={newMessage}
-        onChangeText={setNewMessage}
+        placeholder="Add minutes here..."
+        value={newMinutes}
+        onChangeText={setNewMinutes}
+        multiline={true} // Allow multiple lines input
       />
-      <TouchableOpacity style={styles.sendButton} onPress={handleAddMessage}>
-        <MaterialIcons name="send" size={20} color="white" />
+      <TouchableOpacity style={styles.addButton} onPress={handleAddMinutes}>
+        <Text style={styles.addButtonText}>Add</Text>
       </TouchableOpacity>
     </View> }
-      
       
     </View>
   );
@@ -149,11 +168,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#F5F5F5',
   },
   headingContainer: {
-    position: 'absolute',
-    width: 365,
+    width: 450,
     height: 40,
-    left: 500,
-    top: 0,
     backgroundColor: '#A06D95',
     justifyContent: 'center',
     alignItems: 'center',
@@ -163,66 +179,31 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
   },
-  menuIconContainer: {
+  dateContainer: {
+    marginTop: 10,
+  },
+  dateText: {
+    
     position: 'absolute',
-    right: 10,
-    top: '50%',
-    transform: [{ translateY: -12 }],
+    top: 2,
+    right: 2,
+    color: '#777777',
+    fontSize: 15,
+    
+    
   },
-  menuPopover: {
-    width: 150,
-    borderRadius: 4,
-    elevation: 4,
-  },
-  menuItem: {
-    paddingVertical: 10,
-    paddingHorizontal: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#CCCCCC',
-  },
-  overlayStyle: {
+  minutesContainer: {
     flex: 1,
-    width: width,
-    height: '100%',
-    justifyContent: 'flex-start',
-    alignItems: 'flex-end',
-    backgroundColor: 'transparent',
-  },
-  messageBox: {
-    position: 'absolute',
-    width: 365,
-    height: 500,
-    left: 500,
-    top: 58,
-    borderRadius: 8,
-    padding: 10,
-    backgroundColor: 'white'
-  },
-  messageItem: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: 5,
-    paddingHorizontal: 10,
+    marginTop: 20,
+  },
+  minuteCard: {
+    width: 350,
     borderRadius: 8,
-    marginBottom: 10,
-    shadowColor: '#8B1874',
-    shadowOffset: {
-    width: 0,
-    height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
-    backgroundColor: '#FFFFFF',
-  },
-  messageContent: {
-    color: 'black',
-    marginRight: 10,
-
-  },
-  messageContainer: {
     backgroundColor: '#F5F5F5',
+    justifyContent: 'flex-start',
+    alignItems: 'flex-start',
+    marginBottom: 10,
     padding: 10,
     shadowColor: '#8B1874',
     shadowOffset: {
@@ -233,47 +214,68 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
   },
-
-  iconsContainer: {
-    flexDirection: 'row',
+  minutePoint: {
+    fontSize: 16,
+    marginLeft: 10,
   },
-  iconContainer: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#8B1874',
-    marginLeft: 8, // Adjust the value as needed
-  },
-
-
   inputContainer: {
     position: 'absolute',
+    width: 400,
+    height: 100,
+    borderRadius: 8,
+    padding: 10,
+    backgroundColor: 'white',
+    bottom: '50%',
+    left: '50%',
+    transform: [{ translateX: -190.5 }, { translateY: 240 }],
+    zIndex: 1,
     flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
-    width: 350,
-    height: 40,
-    left: 500,
-    bottom:20,
+    paddingVertical: 5,
     paddingHorizontal: 10,
+    borderRadius: 8,
+    marginBottom: 10,
+    shadowColor: '#8B1874',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+    backgroundColor: '#FFFFFF',
+  },
+  inputLabel: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginRight: 10,
   },
   input: {
     flex: 1,
+    height: 70,
     borderRadius: 8,
     backgroundColor: 'white',
     paddingHorizontal: 10,
     borderWidth: 2,
-    borderColor: '#8B1874',
+    borderColor: '#A06D95',
   },
-  sendButton: {
-    width: 30,
-    height: 30,
-    borderRadius: 20,
+  addButton: {
+    width: 60,
+    height: 40,
+    borderRadius: 4,
     backgroundColor: '#8B1874',
     justifyContent: 'center',
     alignItems: 'center',
     marginLeft: 10,
+    height:20,
+    marginBottom:-45,
+  },
+  addButtonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
+   
   },
 });
 

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Dimensions, TextInput } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import Popover from 'react-native-popover-view';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation ,useFocusEffect} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import jwt_decode from "jwt-decode";
 import axios from 'axios';
@@ -55,6 +55,7 @@ const MyScreen = () => {
     };
     fetchData();
   }, [])
+
   useEffect(() => {
     if (uid !== '') {
       axios.get(`https://backendshg-0jzh.onrender.com/users/${uid}/hasadminAccess`).then(response => {
@@ -74,14 +75,14 @@ const MyScreen = () => {
       })
     }
   }, [uid])
+     
+    
 
   // useEffect(() => {
   //   fetch();
   // }, []);
 
-  useEffect(()=>{
-    // if(isadmin)
-    // {
+  useEffect(()=>{ 
       const fetch=async()=>{
         if(uid!=='')
       {await axios.get(`https://backendshg-0jzh.onrender.com/proposals/${uid}/not-voted`).then(response=>{
@@ -116,6 +117,8 @@ const MyScreen = () => {
       navigation.navigate('announcements');
     }else if (item === 'Pending') {
       navigation.navigate('pending');
+    }else if (item === 'Minutes') {
+      navigation.navigate('minutes');
     }
 
 
@@ -190,6 +193,9 @@ const MyScreen = () => {
         <TouchableOpacity style={styles.menuItem} onPress={() => handleMenuItemPress('Home')}>
           <Text>Home</Text>
         </TouchableOpacity>
+        <TouchableOpacity style={styles.menuItem} onPress={() => handleMenuItemPress('Minutes')}>
+          <Text>Minutes</Text>
+        </TouchableOpacity>
         <TouchableOpacity style={styles.menuItem} onPress={() => handleMenuItemPress('Members')}>
           <Text>Members</Text>
         </TouchableOpacity>
@@ -262,8 +268,9 @@ const styles = StyleSheet.create({
   },
   vote:{
     color: '#A06D95',
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: 'bold',
+    marginLeft:10
   },
   menuIconContainer: {
     position: 'absolute',

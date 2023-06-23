@@ -14,6 +14,7 @@ import profile from './components/profile';
 import sendinvitation from "./components/sendinvitation"
 import announcements from "./components/announcements"
 import pending from "./components/pending"
+import minutes from "./components/minutes"
 const Stack = createNativeStackNavigator();
 import {i18next} from './assets/i18n/i18n'
 import 'intl-pluralrules';
@@ -39,6 +40,7 @@ const MyStack = () => {
         <Stack.Screen name='profile' component={profile} options={{title:''}}/>
         <Stack.Screen name='announcements' component={announcements} options={{title:''}}/>       
         <Stack.Screen name='pending' component={pending} options={{title:''}}/>
+        <Stack.Screen name='minutes' component={minutes} options={{title:''}}/>
       </Stack.Navigator>
     </NavigationContainer>
   );
