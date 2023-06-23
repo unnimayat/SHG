@@ -93,6 +93,7 @@ const Dashboard = ({ route }) => {
       .post('https://backendshg-0jzh.onrender.com/makepayment', { userID: uid, id: id, amt: amount })
       .then(response => {
         console.log(response.data);
+        navigation.navigate('unit')
       })
       .catch(error => {
         console.log('Error:', error);
@@ -236,8 +237,8 @@ const styles = StyleSheet.create({
   proicon:{
     justifyContent:'center',
     alignItems:'center',
-    top:-7,
-    right:5
+    top:-10,
+    right:6
   },
   profileContainer: {
     alignItems: 'center',
@@ -253,19 +254,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     left:100,
-    top:-10,
-  },
-  tableContainer: {
-    marginTop: 150,
-    marginBottom: 20,
-    width: '100%',
+    top:0,
+  }, 
+  tableContainer: { 
+    width: '100%', 
   },
   tableHeader: {
     flexDirection: 'row',
-    marginBottom: 8,
+    marginBottom: 5,
     backgroundColor: '#F8F8F8',
     borderRadius: 4,
     padding: 10,
+    width:'100%',
   },
   headerCell: {
     flex: 1,
@@ -370,18 +370,32 @@ const styles = StyleSheet.create({
   },
   info: {
     position: 'absolute',
-    left: 2,
-    top: -150,
+    left: 10,
+    top: -25,
     width: '100%',
   },
   name: {
     fontSize: 20,
     color: 'white',
+    fontWeight: 'bold',
     marginBottom: 5,
   },
   id: {
-    fontSize: 20,
+    fontSize: 16,
     color: 'white',
+  },
+  contents: {
+    flexDirection: 'column',
+    right: 0,
+    top: 0, 
+  },
+  lowerDiv: { 
+    flex: 1,
+    width: '100%',
+    position: 'absolute',
+    justifyContent: 'center',
+    alignItems: 'center',
+    bottom:300,
   },
 });
 
