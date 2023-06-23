@@ -17,8 +17,8 @@ const MyScreen = () => {
   const [newMessage, setNewMessage] = useState('');
   const [uid, setUId] = useState('')
   const [isadmin, setIsadmin] = useState(false);
-  const [changing,setChanging]=useState(false)
-  
+  const [changing, setChanging] = useState(false)
+
   const options = [
     { label: 'english', value: 'en' },
     { label: 'malayalam', value: 'mal' }
@@ -48,101 +48,119 @@ const MyScreen = () => {
     }
   };
 
-   const onHandle=()=>{
-        if(isadmin)
-        {
-            setChanging(!changing);
-            {changing && <View style={styles.messageBox}>
-            <Text style={styles.date}>{currentDate}</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Enter the amount paid"
-              value={amount === 0 ? '' : amount.toString()}
-              onChangeText={setAmount}
-              keyboardType="numeric"
-            />
-            <TouchableOpacity style={styles.sendButton} onPress={handleAddMessage}>
-              <MaterialIcons name="send" size={20} color="white" />
-            </TouchableOpacity>
-          </View>
-            }
-        }
-   }
+  const onHandle = () => {
+    if (isadmin) {
+      setChanging(!changing);
+      {
+        changing && <View style={styles.messageBox}>
+          <Text style={styles.date}>{currentDate}</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Enter the amount paid"
+            value={amount === 0 ? '' : amount.toString()}
+            onChangeText={setAmount}
+            keyboardType="numeric"
+          />
+          <TouchableOpacity style={styles.sendButton} onPress={handleAddMessage}>
+            <MaterialIcons name="send" size={20} color="white" />
+          </TouchableOpacity>
+        </View>
+      }
+    }
+  }
 
- 
-//   const handleAddMessage = () => {
-//     if (newMessage.trim() !== '') {
-//       setMessages([...messages, { content: newMessage, agreed: false }]);
-//       setNewMessage('');
-//     }
-//   };
 
-//   const handleAgree = (index,mid) => {
-//     const updatedMessages = [...messages];
-//     updatedMessages[index].agreed = !updatedMessages[index].agreed;
-//     setMessages(updatedMessages);
+  //   const handleAddMessage = () => {
+  //     if (newMessage.trim() !== '') {
+  //       setMessages([...messages, { content: newMessage, agreed: false }]);
+  //       setNewMessage('');
+  //     }
+  //   };
 
-//     axios.post(`https://backendshg-0jzh.onrender.com/proposals/vote`,{id:mid,userId:uid,vote:1}).then(response=>{
-//       console.log(response);
-//     })
-//     .catch(error => {
-//       // Handle the error
-//       console.error('Error:', error);
-//     })
-//   };
+  //   const handleAgree = (index,mid) => {
+  //     const updatedMessages = [...messages];
+  //     updatedMessages[index].agreed = !updatedMessages[index].agreed;
+  //     setMessages(updatedMessages);
 
-//   const handleDisagree = (index,mid) => {
-//     const updatedMessages = [...messages];
-//     updatedMessages[index].agreed = false;
-//     setMessages(updatedMessages);
+  //     axios.post(`https://backendshg-0jzh.onrender.com/proposals/vote`,{id:mid,userId:uid,vote:1}).then(response=>{
+  //       console.log(response);
+  //     })
+  //     .catch(error => {
+  //       // Handle the error
+  //       console.error('Error:', error);
+  //     })
+  //   };
 
-//     axios.post(`https://backendshg-0jzh.onrender.com/proposals/vote`,{id:mid,userId:uid,vote:-1}).then(response=>{
-//       console.log(response);
-//     })
-//     .catch(error => {
-//       // Handle the error
-//       console.error('Error:', error);
-//     })
-//   };
- 
-    useEffect(()=>{
+  //   const handleDisagree = (index,mid) => {
+  //     const updatedMessages = [...messages];
+  //     updatedMessages[index].agreed = false;
+  //     setMessages(updatedMessages);
+
+  //     axios.post(`https://backendshg-0jzh.onrender.com/proposals/vote`,{id:mid,userId:uid,vote:-1}).then(response=>{
+  //       console.log(response);
+  //     })
+  //     .catch(error => {
+  //       // Handle the error
+  //       console.error('Error:', error);
+  //     })
+  //   };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const { name, id } = await retrieveToken();
+      console.log(id);
+      setUId(id);
+      setUname(name);
+    };
+    fetchData();
+  }, []);
+
+  useEffect(() => {
     // if(isadmin)
     // {
-      const fetch=async()=>{
-        if(uid!=='')
-      {await axios.get(`https://backendshg-0jzh.onrender.com/proposals/${uid}/not-voted`).then(response=>{
-        console.log('working');
-        console.log(response.data.description);
-        setMessages(response.data);
-        console.log(messages);
+    const fetch = async () => {
+      if (uid !== '') {
+        await axios.post(`https://backendshg-0jzh.onrender.com/proposals/disapproved`, { userID: uid }).then(response => {
+          console.log(response.data);
+          const proposals = response.data;
+          const filteredProposals = Array.isArray(proposals) ? proposals.map((proposal) => ({
+            description: proposal.description,
+            _id: proposal._id,
+          })) : [{
+            description: proposals.description,
+            _id: proposals._id,
+          }];
+          setMessages(filteredProposals);
+          console.log(messages);
+        }
+        ).catch(error => {
+          // Handle the error
+          console.error('Error:', error);
+        })
       }
-      ).catch(error => {
-        // Handle the error
-        console.error('Error:', error);
-      })}
-  }
+    }
     fetch()
     // }
-  },[uid])
+  }, [uid])
   return (
     <View style={styles.container}>
       <View style={styles.headingContainer}>
-        <Text style={styles.heading} >{t("Pending")}</Text> 
+        <Text style={styles.heading} >{t("Pending")}</Text>
       </View>
-       
+
       {messages.map((message, index) => (
-          <View key={index} style={[styles.messageItem, styles.messageContainer]}>
-            <Text style={styles.messageContent}>{message.description}</Text>
-            <View style={styles.iconsContainer}>
-              <TouchableOpacity
-                style={[styles.iconContainer]}
-              > 
-              <Ionicons name="ios-alert-circle" size={24} color="#8B1874" style={styles.icon} onPress={onHandle}/>
-              </TouchableOpacity>
-            </View>
+        <View key={index} style={[styles.messageItem, styles.messageContainer]}>
+          <Text style={styles.messageContent}>{message.description}</Text>
+          <View style={styles.iconsContainer}>
+            <TouchableOpacity
+              style={[styles.iconContainer]}
+            >
+              <Ionicons name="ios-alert-circle" size={24} color="#8B1874" style={styles.icon} onPress={onHandle} />
+            </TouchableOpacity>
           </View>
-        ))}
-         
+        </View>
+      ))}
+
       {/* {isadmin &&
         <View style={styles.inputContainer}>
           <TextInput
@@ -181,7 +199,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
   },
-  vote:{
+  vote: {
     color: '#A06D95',
     fontSize: 16,
     fontWeight: 'bold',
