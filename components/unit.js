@@ -182,29 +182,29 @@ const MyScreen = () => {
         popoverStyle={styles.menuPopover}
         overlayStyle={styles.overlayStyle}
       >
+        <TouchableOpacity style={styles.menuItem} onPress={() => handleMenuItemPress('Home')}>
+          <Text>{t("Home")}</Text>
+        </TouchableOpacity>
         {isadmin && <TouchableOpacity style={styles.menuItem} onPress={() => handleMenuItemPress('SendInvitation')}>
           <Text>{t("Add Member")}</Text>
         </TouchableOpacity>}
         <TouchableOpacity style={styles.menuItem} onPress={() => handleMenuItemPress('Attendance')}>
-          <Text>Attendance</Text>
+          <Text>{t("Attendance")}</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.menuItem} onPress={() => handleMenuItemPress('Announcements')}>
-          <Text>Announcements</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.menuItem} onPress={() => handleMenuItemPress('Home')}>
-          <Text>Home</Text>
+          <Text>{t("Announcements")}</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.menuItem} onPress={() => handleMenuItemPress('Minutes')}>
-          <Text>Minutes</Text>
+          <Text>{t("Minutes")}</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.menuItem} onPress={() => handleMenuItemPress('Members')}>
-          <Text>Members</Text>
+          <Text>{t("Members")}</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.menuItem} onPress={() => handleMenuItemPress('Pending')}>
-          <Text>Pending</Text>
+          <Text>{t("Pending")}</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.menuItem} onPress={() => handleMenuItemPress('Home')}>
-          <Text>Log out</Text>
+          <Text>{t("Log out")}</Text>
         </TouchableOpacity>
       </Popover>
       <View style={styles.messageBox}>
@@ -250,10 +250,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
-    right: 10
+    right: 0
   },
-  headingContainer: {
-    position: 'absolute',
+  headingContainer: { 
     width: 365,
     height: 40,
     left: 0,
@@ -298,12 +297,11 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
     backgroundColor: 'transparent',
   },
-  messageBox: {
-    position: 'absolute',
+  messageBox: { 
     width: 365,
     height: 600,
     left: 0,
-    top: 58,
+    top: 5,
     borderRadius: 8,
     padding: 10,
     backgroundColor: 'white'

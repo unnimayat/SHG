@@ -7,6 +7,7 @@ import jwt_decode from 'jwt-decode';
 import axios from 'axios';
 import { MaterialIcons } from '@expo/vector-icons';
 
+import { useTranslation } from 'react-i18next';
 const retrieveToken = async () => {
   try {
     const token = await AsyncStorage.getItem('token');
@@ -50,7 +51,12 @@ const Dashboard = ({ route }) => {
   const handleEditPress = () => {
     navigation.navigate('editprofile');
   };
+  const options = [
+    { label: 'english', value: 'en' },
+    { label: 'malayalam', value: 'mal' }
+  ];
 
+  const { t, i18n } = useTranslation();
   useEffect(() => {
     if (uid !== '') {
       axios.get(`https://backendshg-0jzh.onrender.com/users/${uid}/hasadminAccess`).then(response => {
@@ -118,13 +124,7 @@ const Dashboard = ({ route }) => {
   const currentDate = new Date().toLocaleDateString();
 
   // Sample data for the table
-  const tableData = [
-    { date: '2023-05-28', amount: '100' },
-    { date: '2023-05-26', amount: '150' },
-    { date: '2023-05-22', amount: '75' },
-    { date: '2023-05-18', amount: '200' },
-    { date: '2023-05-14', amount: '50' },
-  ];
+   
 
   return (
     <View style={styles.container}>
@@ -151,8 +151,8 @@ const Dashboard = ({ route }) => {
           {/* Table */}
           <View style={styles.tableContainer}>
             <View style={styles.tableHeader}>
-              <Text style={styles.headerCell}>Date</Text>
-              <Text style={styles.headerCell}>Amount Paid</Text>
+              <Text style={styles.headerCell}>{t("Date")}</Text>
+              <Text style={styles.headerCell}>{t("Amount Paid")}</Text>
             </View>
             {paymentlist?.map((data, index) => (
               <View style={styles.tableRow} key={index}>
@@ -167,7 +167,7 @@ const Dashboard = ({ route }) => {
             <Text style={styles.date}>{currentDate}</Text>
             <TextInput
               style={styles.input}
-              placeholder="Enter the amount paid"
+              placeholder={t("Enter the amount paid")}
               value={amount === 0 ? '' : amount.toString()}
               onChangeText={setAmount}
               keyboardType="numeric"

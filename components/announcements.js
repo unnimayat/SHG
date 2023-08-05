@@ -5,6 +5,8 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import jwt_decode from 'jwt-decode';
 import { useNavigation } from '@react-navigation/native';
+
+import { useTranslation } from 'react-i18next';
 const { width } = Dimensions.get('window');
 
 const MyScreen = () => {
@@ -15,6 +17,12 @@ const MyScreen = () => {
   const [id, setid] = useState('');
   const [currentUserName, setCurrentUserName] = useState('');
 
+  const options = [
+    { label: 'english', value: 'en' },
+    { label: 'malayalam', value: 'mal' }
+  ];
+
+  const { t, i18n } = useTranslation();
   const retrieveToken = async () => {
     try {
       const token = await AsyncStorage.getItem('token');
@@ -86,7 +94,7 @@ const MyScreen = () => {
   return (
     <View style={styles.container}>
       <View style={styles.headingContainer}>
-        <Text style={styles.heading}>Announcements</Text>
+        <Text style={styles.heading}>{t("Announcements")}</Text>
       </View>
 
       <View style={styles.messageBox}>
@@ -121,8 +129,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#F5F5F5',
   },
-  headingContainer: {
-    position: 'absolute',
+  headingContainer: { 
     width: 365,
     height: 40,
     left: 0,
@@ -136,8 +143,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
   },
-  messageBox: {
-    position: 'absolute',
+  messageBox: { 
     width: 365,
     height: 500,
     left: 0,
@@ -184,8 +190,7 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
   },
-  inputContainer: {
-    position: 'absolute',
+  inputContainer: { 
     flexDirection: 'row',
     alignItems: 'center',
     width: 350,

@@ -103,6 +103,7 @@ axios.post('https://backendshg-0jzh.onrender.com/joinunit',{unitId:unit_id,userI
 .then(response=>{
   console.log(response);
   console.log('hi');
+  navigation.navigate('unit')
 })
   }
   const handleButtonPress = () => {
@@ -178,14 +179,14 @@ axios.post('https://backendshg-0jzh.onrender.com/joinunit',{unitId:unit_id,userI
             <Text style={styles.loginText}>{t('CREATE')}</Text>
           </TouchableOpacity>
         </View>
-      ) : (<view>{ invitation?(
+      ) : (<View>{ invitation?(
         <View style={styles.label}>
-          <Text style={styles.loginText1}>{t(JOIN)}</Text>
+          <Text style={styles.loginText1}>{t("JOIN")}</Text>
           <View style={styles.container}>
             <Icon name="drafts" size={30} color="#A06D95" style={styles.icon} />
             <Text style={styles.loginText1}>Invitation from Group {unit_name}</Text>
             <TouchableOpacity style={styles.loginbtn} onPress={handleButtonJoin}>
-            <Text style={styles.loginText}>{t(JOIN)}</Text>
+            <Text style={styles.loginText}>{t("JOIN")}</Text>
           </TouchableOpacity>
           </View>
         </View>
@@ -193,7 +194,7 @@ axios.post('https://backendshg-0jzh.onrender.com/joinunit',{unitId:unit_id,userI
         <Text style={styles.loginText1}>{t("Sorry You have no invitation")}</Text>
       </View>)
         
-      }</view>)}
+      }</View>)}
 
       {/* navbar */}
       <View style={styles.navbar}>
@@ -265,7 +266,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#A06D95',
     borderRadius: 10,
     padding: 5,
-    width: 100,
+    width: 140,
     justifyContent: 'center',
     alignItems: 'center',
     top: 40,

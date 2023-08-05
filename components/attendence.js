@@ -1,16 +1,19 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, StyleSheet ,TextInput} from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+ 
+ import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/FontAwesome';  
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import jwt_decode from "jwt-decode";
 import axios from 'axios';  
 import { Ionicons } from '@expo/vector-icons';
+import React, { useState, useEffect } from 'react';
+import { View, Text, TouchableOpacity, ScrollView, StyleSheet, TextInput, Platform } from 'react-native';
+
 
 import { useTranslation } from 'react-i18next';
 const Attendance = () => {
   const navigation = useNavigation();
   
+  const [isLoading,setIsLoading]=useState(false);
   const currentDate = new Date();
   const day = String(currentDate.getDate()).padStart(2, '0');
   const month = String(currentDate.getMonth() + 1).padStart(2, '0');
@@ -57,12 +60,14 @@ const Attendance = () => {
       setUId(id);
     };
     fetchData();
-    handleDateChange(currentDate)
+    handleDateChange(formattedDate)
   }, [])
 
   useEffect(() => {
     // Fetch attendance data from the endpoint
-    if (uid != '') {
+    console.log(text)
+    if (uid != '' && text!=='' && text.length===10) {
+      setIsLoading(true)
       axios.get(`https://backendshg-0jzh.onrender.com/attendance/${uid}/${text}`)
         .then(response => {
           console.log(text);
@@ -71,6 +76,7 @@ const Attendance = () => {
           console.log(response.data.presentUsers);
           setStudents(response.data.presentUsers);
           console.log(students)
+          setIsLoading(false)
 
         })
         .catch(error => {
@@ -92,7 +98,7 @@ const Attendance = () => {
     setShow(!show);
   };
   const handleDateChange = () => {
-    setShow(!show);
+    // setShow(!show);
   };
   const handleSaveButtonPress = () => { 
     const postData = {
@@ -121,79 +127,74 @@ const Attendance = () => {
   };
  
 
-  return (
+  return isLoading ? (<ScrollView>{/*isloading*/}</ScrollView>) : (
     <ScrollView>
-      <View style={styles.container}>
-        {/* <View style={styles.today}>  
-            
-            <TextInput style={styles.todayText} placeholder="dd-mm-yyyy" onPress={handleDateChange} value={selectedDate}/>
-              <TouchableOpacity style={styles.todaybtn}>
-                <Ionicons name="search" size={24} color="#8B1874" />
-            </TouchableOpacity>
-
-        </View> */}
-        <View style={styles.today}>
-  {initial ? (
-    <TouchableOpacity onPress={handleInitialChange} style={styles.todaybtn}>
-      <Text style={styles.todayText}>{selectedDate}</Text>
-      <Ionicons name="search" size={24} color="#8B1874" />
-    </TouchableOpacity>
-  ) : (
-    <View style={styles.todaybtn}>
-      <TextInput
-        style={styles.todayText}
-        placeholder="yyyy-mm-dd"
-        value={text}
-        onChangeText={setText}
-        onFocus={handleDateChange}
-        editable={show}
-      />
-      <Ionicons name="search" size={24} color="#8B1874" onPress={handleDateChange}/>
-    </View>
-  )}
-</View>
-
-          <View style={styles.center}>
-            <View style={styles.tableContainer}>
-              <View style={styles.headerRow}>
-                <Text style={styles.headerCell}>ID</Text>
-                <Text style={styles.headerCell}>Name</Text>
-                <Text style={styles.headerCell}>Attendance</Text>
-              </View>
-              {students?.map((student, index) => (
+    <View style={styles.container}>
+      <View style={styles.today}>
+        {initial ? (
+          <TouchableOpacity onPress={handleInitialChange} style={styles.todaybtn}>
+            <Text style={styles.todayText}>{selectedDate}</Text>
+            {Platform.OS !== 'web' && (
+              <Ionicons name="search" size={24} color="#8B1874" onPress={handleDateChange} />
+            )}
+          </TouchableOpacity>
+        ) :  (
+          <View style={styles.todaybtn}>
+            <TextInput
+              style={styles.todayText}
+              placeholder="yyyy-mm-dd"
+              value={text}
+              onChangeText={setText}
+              onFocus={handleDateChange}
+              editable={show}
+            />
+            {Platform.OS !== 'web' && (
+              <Ionicons name="search" size={24} color="#8B1874" onPress={handleDateChange} />
+            )}
+          </View>
+        )}
+      </View>
+  
+      <View style={styles.center}>
+        <View style={styles.tableContainer}>
+          <View style={styles.headerRow}>
+            <Text style={styles.headerCell}>{t("ID")}</Text>
+            <Text style={styles.headerCell}>{t("Name")}</Text>
+            <Text style={styles.headerCell}>{t("Attendance")}</Text>
+          </View>
+          {students?.map((student, index) => (
+            <TouchableOpacity
+              key={student.id}
+              style={styles.row}
+              onPress={() => toggleAttendance(index)}
+            >
+              <Text style={styles.cell}>{student.id}</Text>
+              <Text style={styles.cell}>{student.name}</Text>
+              <View style={styles.attendanceCell}>
                 <TouchableOpacity
-                  key={student.id}
-                  style={styles.row}
+                  style={[
+                    styles.radioBtn,
+                    student.present && styles.radioBtnSelected,
+                  ]}
                   onPress={() => toggleAttendance(index)}
                 >
-                  <Text style={styles.cell}>{student.id}</Text>
-                  <Text style={styles.cell}>{student.name}</Text>
-                  <View style={styles.attendanceCell}>
-                    <TouchableOpacity
-                      style={[
-                        styles.radioBtn,
-                        student.present && styles.radioBtnSelected,
-                      ]}
-                      onPress={() => toggleAttendance(index)}
-                    >
-                      {student.present && <View style={styles.radioBtnInner} />}
-                    </TouchableOpacity>
-                    <Text style={styles.attendanceText}>
-                      {student.present ? 'Present' : 'Absent'}
-                    </Text>
-                  </View>
+                  {student.present && <View style={styles.radioBtnInner} />}
                 </TouchableOpacity>
-              ))}
-
-            </View>
-            <TouchableOpacity style={styles.savebtn} onPress={handleSaveButtonPress}>
-              <Text style={styles.saveText}>SAVE</Text>
+                <Text style={styles.attendanceText}>
+                  {student.present ? 'Present' : 'Absent'}
+                </Text>
+              </View>
             </TouchableOpacity>
-          </View>
-        
+          ))}
+        </View>
+        <TouchableOpacity style={styles.savebtn} onPress={handleSaveButtonPress}>
+          <Text style={styles.saveText}>{t("SAVE")}</Text>
+        </TouchableOpacity>
       </View>
-    </ScrollView>
-  );
+    </View>
+  </ScrollView>
+  
+  )
 };
 
 const styles = StyleSheet.create({
@@ -227,8 +228,7 @@ const styles = StyleSheet.create({
     marginRight: 10,
     padding: 5,
   },
-  todayText: {
-    fontFamily: 'Inter',
+  todayText: { 
     fontStyle: 'normal',
     fontWeight: '300',
     fontSize: 16,

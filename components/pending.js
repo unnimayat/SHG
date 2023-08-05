@@ -18,6 +18,7 @@ const MyScreen = () => {
   const [uid, setUId] = useState('')
   const [isadmin, setIsadmin] = useState(false);
   const [changing, setChanging] = useState(false)
+  const [amount, setAmount] = useState(0);
 
   const options = [
     { label: 'english', value: 'en' },
@@ -48,11 +49,46 @@ const MyScreen = () => {
     }
   };
 
-  const onHandle = () => {
+  const handleAddPendingMessage = (pid) => {
+    setChanging(false);
+    console.log('handlingPending')
+    axios
+      .post('https://backendshg-0jzh.onrender.com/deleteproposal', { userId: uid, proposalId: pid, amt: amount })
+      .then(response => {
+        console.log(response.data);
+        navigation.navigate('unit')
+      })
+      .catch(error => {
+        console.log('Error:', error);
+      });
+  };
+
+  useEffect(() => {
+    if (uid !== '') {
+      axios.get(`https://backendshg-0jzh.onrender.com/users/${uid}/hasadminAccess`).then(response => {
+        setIsadmin(response.data.hasAdminAccess)
+        console.log(isadmin)
+      })
+      .catch(error => {
+        // Handle the error
+        if (error.response && error.response.status === 404) {
+          // Handle the 404 error
+          console.log('Not Found');
+        }
+        else {
+          // Handle other errors
+          console.log('Error:', error.message);
+        }
+      })
+    }
+  }, [uid])
+
+  const onHandle = (pid) => {
     if (isadmin) {
-      setChanging(!changing);
+      setChanging(true);
+      console.log(changing)
       {
-        changing && <View style={styles.messageBox}>
+        changing && (<View style={styles.messageBox}>
           <Text style={styles.date}>{currentDate}</Text>
           <TextInput
             style={styles.input}
@@ -61,11 +97,14 @@ const MyScreen = () => {
             onChangeText={setAmount}
             keyboardType="numeric"
           />
-          <TouchableOpacity style={styles.sendButton} onPress={handleAddMessage}>
+          <TouchableOpacity style={styles.sendButton} onPress={()=>handleAddPendingMessage(pid)}>
             <MaterialIcons name="send" size={20} color="white" />
           </TouchableOpacity>
-        </View>
+        </View>)
       }
+    }
+    else{
+      console.log('not admin')
     }
   }
 
@@ -106,11 +145,12 @@ const MyScreen = () => {
   //   };
 
   useEffect(() => {
+    console.log('Pending')
     const fetchData = async () => {
       const { name, id } = await retrieveToken();
+      console.log(name)
       console.log(id);
       setUId(id);
-      setUname(name);
     };
     fetchData();
   }, []);
@@ -123,14 +163,19 @@ const MyScreen = () => {
         await axios.post(`https://backendshg-0jzh.onrender.com/proposals/disapproved`, { userID: uid }).then(response => {
           console.log(response.data);
           const proposals = response.data;
-          const filteredProposals = Array.isArray(proposals) ? proposals.map((proposal) => ({
+          console.log(proposals)
+          if(proposals.length!==0)
+          {const filteredProposals = Array.isArray(proposals) ? proposals.map((proposal) => ({
             description: proposal.description,
             _id: proposal._id,
           })) : [{
             description: proposals.description,
             _id: proposals._id,
           }];
-          setMessages(filteredProposals);
+          setMessages(filteredProposals);}
+          else{
+            setMessages(null)
+          }
           console.log(messages);
         }
         ).catch(error => {
@@ -148,14 +193,16 @@ const MyScreen = () => {
         <Text style={styles.heading} >{t("Pending")}</Text>
       </View>
 
-      {messages.map((message, index) => (
+      {
+    messages?.map((message, index) => (
         <View key={index} style={[styles.messageItem, styles.messageContainer]}>
           <Text style={styles.messageContent}>{t("paymentText", { name: message.description.name, amount: message.description.amount })}</Text>
           <View style={styles.iconsContainer}>
             <TouchableOpacity
               style={[styles.iconContainer]}
             >
-              <Ionicons name="ios-alert-circle" size={24} color="#8B1874" style={styles.icon} onPress={onHandle} />
+              <Ionicons name="ios-alert-circle" size={24} color="white" style={styles.icon} onPress={()=>onHandle(message._id)} />
+               
             </TouchableOpacity>
           </View>
         </View>
@@ -184,11 +231,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#F5F5F5',
   },
-  headingContainer: {
-    position: 'absolute',
+  headingContainer: { 
     width: 365,
     height: 40,
-    left: 500,
+    left: 0,
     top: 0,
     backgroundColor: '#A06D95',
     justifyContent: 'center',
@@ -204,8 +250,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
   },
-  menuIconContainer: {
-    position: 'absolute',
+  menuIconContainer: { 
     right: 10,
     top: '50%',
     transform: [{ translateY: -12 }],
@@ -229,8 +274,7 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
     backgroundColor: 'transparent',
   },
-  messageBox: {
-    position: 'absolute',
+  messageBox: { 
     width: 365,
     height: 600,
     left: 500,
@@ -246,7 +290,8 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     paddingHorizontal: 10,
     borderRadius: 8,
-    marginBottom: 10,
+    bottom: -90,
+
     shadowColor: '#8B1874',
     shadowOffset: {
       width: 0,
@@ -285,7 +330,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#8B1874',
-    marginLeft: 8, // Adjust the value as needed
+    marginLeft: 8, 
   },
 
 
@@ -298,6 +343,86 @@ const styles = StyleSheet.create({
     left: 500,
     bottom: 40,
     paddingHorizontal: 10,
+  },
+  input: {
+    flex: 1,
+    borderRadius: 8,
+    backgroundColor: 'white',
+    paddingHorizontal: 10,
+    borderWidth: 2,
+    borderColor: '#8B1874',
+  },
+  sendButton: {
+    width: 30,
+    height: 30,
+    borderRadius: 20,
+    backgroundColor: '#8B1874',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: 15,
+  },messageBox: {
+    position: 'absolute',
+    width: 320,
+    height: 80,
+    borderRadius: 8,
+    padding: 10,
+    backgroundColor: 'white',
+    bottom: '50%',
+    left: '50%',
+    transform: [{ translateX: -60.5 }, { translateY: 150 }],
+    zIndex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    borderRadius: 8,
+    marginBottom: 10,
+    shadowColor: '#8B1874',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+    backgroundColor: '#FFFFFF',
+  },
+
+  messageBox: {
+    position: 'absolute',
+    width: 320,
+    height: 80,
+    borderRadius: 8,
+    padding: 10,
+    backgroundColor: 'white',
+    bottom: '50%',
+    left: '50%',
+    transform: [{ translateX: -160.5 }, { translateY: 240 }],
+    zIndex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    borderRadius: 8,
+    marginBottom: 10,
+    shadowColor: '#8B1874',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+    backgroundColor: '#FFFFFF',
+  },
+  date: {
+    position: 'absolute',
+    top: 2,
+    right: 2,
+    color: '#777777',
+    fontSize: 12,
   },
   input: {
     flex: 1,

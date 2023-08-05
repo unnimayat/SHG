@@ -4,6 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage'; // Import 
 import axios from 'axios'; // Import axios for making HTTP requests
 import jwt_decode from 'jwt-decode'; // Import jwt-decode for decoding JWT tokens
 
+import { useTranslation } from 'react-i18next';
 const { width } = Dimensions.get('window');
 
 const MyScreen = () => {
@@ -14,6 +15,13 @@ const MyScreen = () => {
   const [currentUserName, setCurrentUserName] = useState('');
   
   const [isadmin, setIsadmin] = useState(false);
+
+  const options = [
+    { label: 'english', value: 'en' },
+    { label: 'malayalam', value: 'mal' }
+  ];
+
+  const { t, i18n } = useTranslation();
 
   const retrieveToken = async () => {
     try {
@@ -38,7 +46,7 @@ const MyScreen = () => {
 
   useEffect(() => {
     if (id !== '') {
-      axios.get(`https://backendshg-0jzh.onrender.com/users/${uid}/hasadminAccess`).then(response => {
+      axios.get(`https://backendshg-0jzh.onrender.com/users/${id}/hasadminAccess`).then(response => {
         setIsadmin(response.data.hasAdminAccess)
         console.log(isadmin)
       })
@@ -121,7 +129,7 @@ const MyScreen = () => {
   return (
     <View style={styles.container}>
       <View style={styles.headingContainer}>
-        <Text style={styles.heading}>Minutes</Text>
+        <Text style={styles.heading}>{t("Minutes")}</Text>
       </View>
       <View style={styles.dateContainer}></View>
       <View style={styles.minutesContainer}>
@@ -153,7 +161,7 @@ const MyScreen = () => {
         multiline={true} // Allow multiple lines input
       />
       <TouchableOpacity style={styles.addButton} onPress={handleAddMinutes}>
-        <Text style={styles.addButtonText}>Add</Text>
+        <Text style={styles.addButtonText}>{t("Add")}</Text>
       </TouchableOpacity>
     </View> }
       
@@ -185,8 +193,8 @@ const styles = StyleSheet.create({
   dateText: {
     
     position: 'absolute',
-    top: 2,
-    right: 2,
+    top: 15,
+    right: 40,
     color: '#777777',
     fontSize: 15,
     
@@ -245,6 +253,8 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
     backgroundColor: '#FFFFFF',
+    marginBottom:-90
+    
   },
   inputLabel: {
     fontSize: 16,
@@ -261,19 +271,20 @@ const styles = StyleSheet.create({
     borderColor: '#A06D95',
   },
   addButton: {
-    width: 60,
-    height: 40,
+    width: 100,
+    height: 60,
     borderRadius: 4,
     backgroundColor: '#8B1874',
     justifyContent: 'center',
     alignItems: 'center',
-    marginLeft: 10,
-    height:20,
-    marginBottom:-45,
+    marginLeft: 20,
+    height:40,
+    left:-15,
+    marginBottom:-20,
   },
   addButtonText: {
     color: 'white',
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: 'bold',
    
   },

@@ -9,8 +9,8 @@ export default function Home({ navigation }) {
   };
 
   const options = [
-    { label: 'english', value: 'en' },
-    { label: 'malayalam', value: 'mal' }
+    { label: 'English', value: 'en' },
+    { label: 'Malayalam', value: 'mal' }
   ];
 
   const { t, i18n } = useTranslation();
@@ -45,7 +45,7 @@ const styles = StyleSheet.create({
     width:160,
     height:20,
     bottom:300,
-    left:150
+    left:100
   },
 
   container: {

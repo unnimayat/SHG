@@ -9,7 +9,12 @@ const MemberListPage = () => {
   const navigation = useNavigation();
   const [members, setMembers] = useState([]);
   const [id, setId] = useState('');
+  const options = [
+    { label: 'english', value: 'en' },
+    { label: 'malayalam', value: 'mal' }
+  ];
 
+  const { t, i18n } = useTranslation();
   const retrieveToken = async () => {
     try {
       const token = await AsyncStorage.getItem('token');
@@ -84,10 +89,10 @@ const MemberListPage = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.pageTitle}>Member List</Text>
+      <Text style={styles.pageTitle}>{t("Member List")}</Text>
       <View style={styles.tableHeader}>
-        <Text style={styles.headerCell}>Name</Text>
-        <Text style={styles.headerCell}>ID</Text>
+        <Text style={styles.headerCell}>{t("Name")}</Text>
+        <Text style={styles.headerCell}>{t("ID")}</Text>
       </View>
       <FlatList
         data={members}

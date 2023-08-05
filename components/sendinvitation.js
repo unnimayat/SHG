@@ -5,6 +5,7 @@ import axios from 'axios';
 import { useTranslation } from 'react-i18next';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import jwt_decode from "jwt-decode";
+import { t } from 'i18next';
 
 export default function SendInvitation() {
   const [name, setName] = useState('');
@@ -61,7 +62,7 @@ export default function SendInvitation() {
         console.log(response)
         if (response) {
           // Login successful, navigate to the next screen
-           
+           navigation.navigate('unit')
         } else {
           console.log('added unsuccessfully');
         }
@@ -76,23 +77,23 @@ export default function SendInvitation() {
   return (
     <View style={styles.container}>
       <View style={styles.label}>
-        <Text style={styles.loginText1}>ADD MEMBER</Text>
+        <Text style={styles.loginText1}>{t("ADD MEMBER")}</Text>
         <TextInput
           style={styles.inputname}
-          placeholder="Enter Name"
+          placeholder={t("Enter Name")}
           placeholderTextColor="#9B6D92"
           value={inviteName}
           onChangeText={handleNameChange}
         />
         <TextInput
           style={styles.inputname}
-          placeholder="Enter Id"
+          placeholder={t("Enter Id")}
           placeholderTextColor="#9B6D92"
           value={inviteId}
           onChangeText={handleIdChange}
         />
         <TouchableOpacity style={styles.loginbtn} onPress={handleButtonPress}>
-          <Text style={styles.loginText}>Invite</Text>
+          <Text style={styles.loginText}>{t("Invite")}</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -134,7 +135,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#A06D95',
     borderRadius: 10,
     padding: 5,
-    width: 100,
+    width: 150,
     justifyContent: 'center',
     alignItems: 'center',
     top: 40,

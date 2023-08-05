@@ -18,6 +18,23 @@
         "No posts yet":"ഇതുവരെ പോസ്റ്റുകളില്ല",
         "Unit Data":"യൂണിറ്റ് ഡാറ്റ",
         "Vote":"വോട്ട് ചെയ്യുക",
-        "paymentText": "{{name}} {{amount}} രൂപ പണമടച്ചു"
+        "paymentText": "{{name}} {{amount}} രൂപ പണമടച്ചു",
+        "Home":"ഹോം",
+        "Add Member":"അംഗത്തെ ചേർക്കുക",
+        "Attendance":"ഹാജർ",
+        "Minutes":"മിനിറ്റുകൾ",
+        "Members":"അംഗങ്ങൾ",
+        "Pending":"തീർപ്പുകൾ",
+        "Log out":"ലോഗ് ഔട്ട്",
+        "Invite":"ക്ഷണിക്കുക",
+        "ADD MEMBER":"അംഗത്തെ ചേർക്കുക",
+        "Name":"പേര്",
+        "ID":"ഐഡി",
+        "SAVE":"ചേർക്കുക",
+        "Add":"ചേർക്കുക",
+        "Member List":"മെമ്പർ ലിസ്റ്റ്", 
+        "Date":"തീയതി",
+        "Amount Paid":"അടച്ച തുക"
+
     }
 }

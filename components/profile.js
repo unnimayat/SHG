@@ -152,8 +152,8 @@ const Profile = () => {
       </View>
       
       <View style={styles.info}>
-        <Text style={styles.name}>Name: {uname}</Text>
-        <Text style={styles.id}>ID: {uid}</Text> 
+            <Text style={styles.name}>{uname}</Text>
+            <Text style={styles.id}>{uid}</Text> 
       </View>
 
       {/* Lower div */}
@@ -420,21 +420,21 @@ const styles = StyleSheet.create({
     marginLeft: 15,
   },
   info: {
-    backgroundColor:'black',
     position: 'absolute',
-    left: 2,
-    top: -150,
+    left: 30,
+    top: 175,
     width: '100%',
   },
   name: {
     fontSize: 20,
     color: 'white',
+    fontWeight: 'bold',
     marginBottom: 5,
   },
   id: {
-    fontSize: 20,
+    fontSize: 16,
     color: 'white',
-  }, 
+  },
   tableContainer: { 
     width: '100%', 
   },
