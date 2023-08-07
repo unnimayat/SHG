@@ -18,12 +18,13 @@ const Attendance = () => {
   const day = String(currentDate.getDate()).padStart(2, '0');
   const month = String(currentDate.getMonth() + 1).padStart(2, '0');
   const year = currentDate.getFullYear();
-  const formattedDate = `${day}-${month}-${year}`;
+  const formattedDate = `${year}-${month}-${day}`;
   const [students, setStudents] = useState([]);
   const [selectedDate, setSelectedDate] = useState(formattedDate);
   const [initial,setInitial]=useState(true);
   const [show, setShow] = useState(true); 
-  const [text, setText] = useState('');
+  // earlier it was useState('') this makes selectedDate useless
+  const [text, setText] = useState(formattedDate);
   const [uid, setUId] = useState('') 
   const options = [
     { label: 'english', value: 'en' },
@@ -71,10 +72,12 @@ const Attendance = () => {
       axios.get(`https://backendshg-0jzh.onrender.com/attendance/${uid}/${text}`)
         .then(response => {
           console.log(text);
+          console.log("First")
           const attendanceData = response.data;
-
+          console.log("second")
           console.log(response.data.presentUsers);
           setStudents(response.data.presentUsers);
+          console.log('third')
           console.log(students)
           setIsLoading(false)
 
@@ -178,9 +181,10 @@ const Attendance = () => {
                   ]}
                   onPress={() => toggleAttendance(index)}
                 >
-                  {student.present && <View style={styles.radioBtnInner} />}
+                  {/* The problem!!!! */}
+                {/* {student.present && <View style={styles.radioBtnInner} />} */}
                 </TouchableOpacity>
-                <Text style={styles.attendanceText}>
+                <Text>
                   {student.present ? 'Present' : 'Absent'}
                 </Text>
               </View>
