@@ -108,6 +108,7 @@ export default function Login() {
           placeholder={t("Enter Id")}
           placeholderTextColor="#9B6D92"
           value={id}
+          secureTextEntry={true} 
           onChangeText={handleIdChange}
         />
         <TouchableOpacity style={styles.loginbtn} onPress={handleButtonPress}>

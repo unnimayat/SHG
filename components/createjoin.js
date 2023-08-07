@@ -15,7 +15,8 @@ export default function CreateJoin() {
   const [createLabel, setCreateLabel] = useState(true);
   const [joinLabel, setJoinLabel] = useState(false);
   const navigation = useNavigation();
-  const [uid, setUId] = useState('')
+  const [uid, setUId] = useState(''); 
+  const [unitid, setId] = useState(''); 
   const [invitestatus, setInvitestatus] = useState(null)
   const [invitation,setInvitation]=useState(false);
 
@@ -78,6 +79,9 @@ export default function CreateJoin() {
   const handleIdChange = (value) => {
     setId(value);
   };
+  const handleUnitIdChange = (value) => {
+    setunitId(value);
+  };
 
   const handleButtonCreatePress = () => {
     setCreateLabel(true);
@@ -113,7 +117,7 @@ axios.post('https://backendshg-0jzh.onrender.com/joinunit',{unitId:unit_id,userI
         if (response.data.status) {
           // Login successful, navigate to the next screen
           console.log(response.data.status)
-          navigation.navigate('createjoin');
+          navigation.navigate('unit');
         } else {
           console.log('Creation unsuccessful');
         }
@@ -121,7 +125,7 @@ axios.post('https://backendshg-0jzh.onrender.com/joinunit',{unitId:unit_id,userI
       .catch(error => {
         console.log('error');
       });
-    navigation.navigate('unit');
+    navigation.navigate('createjoin');
   };
 
   const handleHomePress = () => {
@@ -173,7 +177,7 @@ axios.post('https://backendshg-0jzh.onrender.com/joinunit',{unitId:unit_id,userI
             placeholder={t("Enter Unit Id")}
             placeholderTextColor="#9B6D92"
             value={unit_id}
-            onChangeText={handleIdChange}
+            onChangeText={handleUnitIdChange}
           />
           <TouchableOpacity style={styles.loginbtn} onPress={handleButtonPress}>
             <Text style={styles.loginText}>{t('CREATE')}</Text>

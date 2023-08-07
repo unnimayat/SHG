@@ -140,6 +140,7 @@ const Profile = () => {
   return (
     <View style={styles.container}>
       {/* Upper div */}
+      
       <View style={styles.upperDiv}>
         <View style={styles.upperLeft}>
           <View style={styles.profileCircle}>
@@ -148,13 +149,12 @@ const Profile = () => {
           <TouchableOpacity style={styles.editButton} onPress={handleEditPress}>
             <Ionicons name="pencil-outline" size={20} color="#FFFFFF" />
           </TouchableOpacity>
+          
         </View>
+        
       </View>
       
-      <View style={styles.info}>
-            <Text style={styles.name}>{uname}</Text>
-            <Text style={styles.id}>{uid}</Text> 
-      </View>
+      
 
       {/* Lower div */}
       <View style={styles.lowerDiv}>
@@ -170,7 +170,10 @@ const Profile = () => {
               </View>
             ))}
           </View> */}
-           
+           <View style={styles.info}>
+            <Text style={styles.name}>{uname}</Text>
+            <Text style={styles.id}>{uid}</Text> 
+          </View>
           <View style={styles.tableContainer}>
             <View style={styles.tableHeader}>
               <Text style={styles.headerCell}>Date</Text>
@@ -205,7 +208,7 @@ const Profile = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: 'white',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -395,10 +398,7 @@ const styles = StyleSheet.create({
     elevation: 5,
     backgroundColor: '#FFFFFF',
   },
-  date: {
-    position: 'absolute',
-    top: 2,
-    right: 2,
+  date: { 
     color: '#777777',
     fontSize: 12,
   },
@@ -419,10 +419,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginLeft: 15,
   },
-  info: {
-    position: 'absolute',
-    left: 30,
-    top: 175,
+  info: {   
+    flexDirection: 'column',
+    marginBottom: 5,  
+    top:-100,
+    padding: 25, 
     width: '100%',
   },
   name: {
