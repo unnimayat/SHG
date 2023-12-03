@@ -3,6 +3,8 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import home from './components/home';
 import login from './components/login';
+import category from './components/category';
+import signin from "./components/signin"
 import createjoin from './components/createjoin'
 import attendance from './components/attendence';
 import unit from './components/unit';
@@ -15,6 +17,7 @@ import sendinvitation from "./components/sendinvitation"
 import announcements from "./components/announcements"
 import pending from "./components/pending"
 import minutes from "./components/minutes"
+import ListingPage from "./components/list"
 const Stack = createNativeStackNavigator();
 import {i18next} from './assets/i18n/i18n'
 import 'intl-pluralrules';
@@ -41,6 +44,9 @@ const MyStack = () => {
         <Stack.Screen name='announcements' component={announcements} options={{title:''}}/>       
         <Stack.Screen name='pending' component={pending} options={{title:''}}/>
         <Stack.Screen name='minutes' component={minutes} options={{title:''}}/>
+        <Stack.Screen name="category" component={category} />
+        <Stack.Screen name="ListingPage" component={ListingPage} />
+        <Stack.Screen name="signin" component={signin} options={{title:''}}/>
       </Stack.Navigator>
     </NavigationContainer>
   );

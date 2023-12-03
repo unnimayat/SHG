@@ -4,7 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import jwt_decode from "jwt-decode";
-export default function Login() {
+export default function SignIn() {
   const [name, setName] = useState('');
   const [id, setId] = useState('');
   const navigation = useNavigation();
@@ -55,28 +55,7 @@ export default function Login() {
       console.error('Failed to remove token', error);
     }
   };
-  const handleButtonPress = () => {
-    axios.post('https://backendshg-0jzh.onrender.com/login', { name, id })
-      .then(response => {
-        // Handle the response from the server
-        // setName({ name });
-        // console.log(name);
-        console.log(response)
-        if (response.data.status) {
-          // Login successful, navigate to the next screen
-          const token = response.data.token;
-          storeToken(token)
 
-          navigation.navigate('feed');
-        } else {
-          console.log('login unsuccessful');
-        }
-      })
-      .catch(error => {
-        console.log('error');
-      });
-
-  };
 
   const handleNameChange = (value) => {
     setName(value);
@@ -86,19 +65,37 @@ export default function Login() {
     setId(value);
   };
 
-  // const handleButtonPress = () => {
-  //   // Handle the login logic and navigate to the next screen
-  //   navigation.navigate('feed');
-  // };
-  const handleSignIn = () => {
+  const handleButtonPress = () => {
     // Handle the login logic and navigate to the next screen
-    navigation.navigate('signin');
+    axios.post('https://backendshg-0jzh.onrender.com/signin', { name, id })
+    .then(response => {
+      console.log(response);
+
+      if (response.data.status) {
+        // Perform any additional logic for sign-in success, e.g., set user session
+        console.log('Sign-in successful');
+        const token = response.data.token;
+        storeToken(token);
+        // Navigate to the desired screen (replace 'dashboard' with your target screen)
+        navigation.navigate('login');
+      } else {
+        // Handle sign-in failure
+        console.log('Sign-in unsuccessful');
+      }
+    })
+    .catch(error => {
+      console.log('Error during sign-in', error);
+    });
+  };
+  const handleLogin = () => {
+    // Handle the login logic and navigate to the next screen
+    navigation.navigate('login');
   };
 
   return (
     <View style={styles.container}>
       <View style={styles.label}>
-        <Text style={styles.loginText1}>Login</Text>
+        <Text style={styles.loginText1}>Sign In</Text>
         <TextInput
           style={styles.inputname}
           placeholder="Enter Name"
@@ -114,9 +111,9 @@ export default function Login() {
           secureTextEntry={true}
           onChangeText={handleIdChange}
         />
-        <Text  style={styles.newlogin} onPress={handleSignIn}>Sign In?</Text>
+         <Text  style={styles.newlogin} onPress={handleLogin}>Login?</Text>
         <TouchableOpacity style={styles.loginbtn} onPress={handleButtonPress}>
-          <Text style={styles.loginText}>Login</Text>
+          <Text style={styles.loginText}>Sign In</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -139,20 +136,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  newlogin: {
-    width: 243,
-    height: 41,
-    borderRadius: 20,
-    alignSelf: 'center',
-    justifyContent: 'center',
-    marginBottom: 20,
-    lineHeight: 18, 
-    color: 'white', // White text color
-    padding: 10,
-    fontSize: 12,  // Slightly lighter color for borders
-    marginTop: 10,
-    marginLeft:340,
-  },
   inputname: {
     width: 243,
     height: 41,
@@ -167,6 +150,20 @@ const styles = StyleSheet.create({
     borderWidth: 0.5,
     borderColor: '#ddd', // Slightly lighter color for borders
     marginTop: 10,
+  },
+  newlogin: {
+    width: 243,
+    height: 41,
+    borderRadius: 20,
+    alignSelf: 'center',
+    justifyContent: 'center',
+    marginBottom: 20,
+    lineHeight: 18, 
+    color: 'white', // White text color
+    padding: 10,
+    fontSize: 12,  // Slightly lighter color for borders
+    marginTop: 10,
+    marginLeft:340,
   },
   loginbtn: {
     backgroundColor: '#fff', // White background color

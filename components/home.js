@@ -1,38 +1,26 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Image } from 'react-native';
 import CustomButton from './CustomButton';
-import SwitchSelector from 'react-native-switch-selector';
-import { useTranslation } from 'react-i18next';
+
 export default function Home({ navigation }) {
   const pressHandler = () => {
     navigation.navigate('login');
   };
 
-  const options = [
-    { label: 'English', value: 'en' },
-    { label: 'Malayalam', value: 'mal' }
-  ];
-
-  const { t, i18n } = useTranslation();
-
   return (
     <View style={styles.container}>
       <View style={styles.container1}>
         <View style={styles.imageContainer}>
-          <Image source={require('../assets/shg.png')} style={styles.image} />
+          {/* <Image source={require('../assets/1.png')} style={styles.image} /> */}
         </View>
       </View>
-      <SwitchSelector options={options} onPress={(language) => { 
-        i18n.changeLanguage(language)
-      }} style={[styles.toggle, { borderColor: '#8B1874' }]}
-      buttonColor="#8B1874" />
 
       <View style={styles.container2}>
         <View>         
           <CustomButton
-            title={t("Getstarted")}
+            title="Get Started"
             onPress={pressHandler}
-            textColor="#8B1874"
+            textColor="black"
           />
         </View>
       </View>
@@ -41,80 +29,32 @@ export default function Home({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  toggle:{ 
-    width:160,
-    height:20,
-    bottom:300,
-    left:100
-  },
-
   container: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#ffffff',
+    backgroundColor: '#000', // Black background color
   },
   imageContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  topbutton: {
-    display: 'flex',
-    flexDirection: 'row',
-    left: 100,
-    bottom: 20,
-  },
-  topButton: {
-    width: 60,
-    height: 30,
-    borderRadius: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  selectedButton: {
-    backgroundColor: '#A06D95',
-  },
-  nonselectedButton: {
-    borderWidth: 2,
-    borderColor: '#8B1874',
-  },
-  buttonText: {
-    fontSize: 12,
-    fontWeight: 'bold',
-    color: '#D9D9D9',
-    padding: 5,
-  },
-  selectedButtonText: {
-    color: '#fff',
-  },
-  nonselectedButtonText: {
-    color: '#FFFFFF',
-  },
-  label: {
-    borderWidth: 2,
-    borderColor: '#8B1874',
-    width: 329,
-    height: 580,
-    borderRadius: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  image: {
-    width: 200,
-    height: 200,
-    alignSelf: 'center',
-  },
   container2: {
-    backgroundColor: '#8B1874',
-    width: 500,
+    backgroundColor: '#000', // Black background color
+    width: '100%',
     height: '50%',
     justifyContent: 'center',
     alignItems: 'center',
   },
   container1: {
-    backgroundColor: '#ffffff',
-    width: 500,
+    backgroundColor: '#000', // Black background color
+    width: '100%',
     height: '50%',
+  },
+  image: { 
+    width: 250,
+    height: 250,
+    alignSelf: 'center',
   },
 });
